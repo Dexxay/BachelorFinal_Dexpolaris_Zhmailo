@@ -338,7 +338,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 103990397}
   m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: 0, y: 200, z: -150}
+  m_LocalPosition: {x: 0, y: 260, z: -150}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -379,7 +379,7 @@ MonoBehaviour:
   finishAsteroidPrefab: {fileID: 5957564763764216911, guid: b0ae82f16437d5441acd7aff9d0ef057, type: 3}
   levelObjectsParent: {fileID: 1897631583}
   gridSpacing: 1
-  randomHeightRange: 5
+  randomHeightRange: 7
   editorPlaneCollider: {fileID: 1929779907}
   startAsteroidInstance: {fileID: 0}
   finishAsteroidInstance: {fileID: 0}
@@ -426,7 +426,7 @@ MonoBehaviour:
   wasdMoveSpeed: 200
   cameraZoomSpeed: 1000
   cameraRotationSpeed: 150
-  maxCameraDistance: 250
+  maxCameraDistance: 400
   zoomFactor: 8
   minZoomOffset: 0.1
 --- !u!1 &164622627
@@ -2981,7 +2981,7 @@ Transform:
   m_GameObject: {fileID: 1929779906}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 50, y: 1, z: 26}
+  m_LocalScale: {x: 50, y: 1, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
