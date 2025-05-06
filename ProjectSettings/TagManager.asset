@@ -9,6 +9,7 @@ TagManager:
   - ShotGun
   - Gun
   - Collectable
+  - EditorPlane
   layers:
   - Default
   - TransparentFX

@@ -99,6 +99,8 @@
     <Compile Include="Assets\Scripts\UI\MenuScripts\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\Enemies\NavAgentTest.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\LevelEditor.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\ObjectRadius.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
