@@ -337,14 +337,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 103990397}
-  m_LocalRotation: {x: 0.60876137, y: 0, z: 0, w: 0.7933534}
-  m_LocalPosition: {x: 0, y: 200, z: -75}
+  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
+  m_LocalPosition: {x: 0, y: 200, z: -150}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 75, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
 --- !u!114 &103990401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,9 +423,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e875fe9bf9e14042b4a12d88fdc6e0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraMoveSpeed: 3500
+  wasdMoveSpeed: 200
   cameraZoomSpeed: 1000
-  maxCameraDistance: 300
+  cameraRotationSpeed: 150
+  maxCameraDistance: 250
   zoomFactor: 8
   minZoomOffset: 0.1
 --- !u!1 &164622627
@@ -2839,7 +2840,6 @@ GameObject:
   - component: {fileID: 1929779909}
   - component: {fileID: 1929779908}
   - component: {fileID: 1929779907}
-  - component: {fileID: 1929779911}
   m_Layer: 0
   m_Name: Plane
   m_TagString: EditorPlane
@@ -2926,15 +2926,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!45 &1929779911
-Skybox:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1929779906}
-  m_Enabled: 1
-  m_CustomSkybox: {fileID: 0}
 --- !u!1 &2008623678
 GameObject:
   m_ObjectHideFlags: 0

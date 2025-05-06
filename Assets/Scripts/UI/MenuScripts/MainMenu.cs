@@ -15,6 +15,12 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(2);
     }
 
+    public void ChooseEditor()
+    {
+        SceneManager.LoadScene(3);
+    }
+
+
     public void QuitGame()
     {
         Application.Quit();

@@ -1,19 +1,23 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))] // Вимагає наявності компонента Camera на тому ж об'єкті
+[RequireComponent(typeof(Camera))]
 public class EditorCameraMovement : MonoBehaviour
 {
     [Header("Налаштування камери")]
-    public float cameraMoveSpeed = 30f;
+    public float wasdMoveSpeed = 20f;
     public float cameraZoomSpeed = 20f;
+    public float cameraRotationSpeed = 100f;
     public float maxCameraDistance = 100f;
-    public float zoomFactor = 4f; // Скільки разів можна віддалитися від початкової позиції Y
-    public float minZoomOffset = 0.1f; // Мінімальна відстань до площини для перспективної камери
+    public float zoomFactor = 4f; 
+    public float minZoomOffset = 0.1f;
 
     private Camera editorCamera;
-    private Collider editorPlaneCollider; // Collider площини для визначення поверхні
+    private Collider editorPlaneCollider;
     private Vector3 initialCameraPosition;
     private float initialCameraY;
+
+    private const float MinPitch = -45f;
+    private const float MaxPitch = 75f;
 
     public void Init(Camera camera, Collider planeCollider)
     {
@@ -23,51 +27,96 @@ public class EditorCameraMovement : MonoBehaviour
         if (editorCamera == null)
         {
             Debug.LogError("Камера редактора не знайдена для EditorCameraMovement!");
-            enabled = false; // Вимикаємо скрипт, якщо камера не знайдена
+            enabled = false;
             return;
         }
 
         initialCameraPosition = editorCamera.transform.position;
         initialCameraY = initialCameraPosition.y;
+
+        Vector3 initialEuler = editorCamera.transform.rotation.eulerAngles;
+        editorCamera.transform.rotation = Quaternion.Euler(initialEuler.x, initialEuler.y, 0);
     }
 
     public void HandleInput()
     {
         if (editorCamera == null) return;
 
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        Vector3 currentPosition = editorCamera.transform.position;
-        float moveDirection = Input.GetKey(KeyCode.LeftShift) ? -1f : 1f; // Змінюємо напрямок руху по осі X при Shift
+        if (Input.GetMouseButton(2))
+        {
+            float mouseX = Input.GetAxis("Mouse X");
+            float mouseY = Input.GetAxis("Mouse Y");
 
-        // Рух по X (Shift + Mouse Scroll)
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            float moveX = scrollInput * cameraMoveSpeed * Time.unscaledDeltaTime * moveDirection;
-            currentPosition += Vector3.right * moveX;
+            float deltaYaw = mouseX * cameraRotationSpeed * Time.unscaledDeltaTime;
+            float deltaPitch = -mouseY * cameraRotationSpeed * Time.unscaledDeltaTime;
+
+            editorCamera.transform.Rotate(Vector3.up, deltaYaw, Space.World);
+            editorCamera.transform.Rotate(editorCamera.transform.right, deltaPitch, Space.Self);
+
+            ClampPitch();
         }
-        // Рух по Z (Ctrl + Mouse Scroll)
-        else if (Input.GetKey(KeyCode.LeftControl))
+
+        HandleWASDMovement();
+        HandleScrollZoom();
+        ApplyPositionClamping();
+    }
+
+    private void HandleWASDMovement()
+    {
+        Vector3 moveDirection = Vector3.zero;
+
+        if (Input.GetKey(KeyCode.W)) moveDirection += editorCamera.transform.forward;
+        if (Input.GetKey(KeyCode.S)) moveDirection -= editorCamera.transform.forward;
+        if (Input.GetKey(KeyCode.D)) moveDirection += editorCamera.transform.right;
+        if (Input.GetKey(KeyCode.A)) moveDirection -= editorCamera.transform.right;
+
+        if (moveDirection.magnitude > 0)
         {
-            float moveZ = scrollInput * cameraMoveSpeed * Time.unscaledDeltaTime;
-            currentPosition += Vector3.forward * moveZ;
+            Vector3 horizontalMoveDirection = new Vector3(moveDirection.x, 0, moveDirection.z).normalized;
+
+            editorCamera.transform.position += horizontalMoveDirection * wasdMoveSpeed * Time.unscaledDeltaTime;
         }
-        // Масштабування (просто Mouse Scroll)
-        else if (scrollInput != 0)
+    }
+
+    private void HandleScrollZoom()
+    {
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+
+        if (scrollInput != 0)
         {
+            Vector3 currentPosition = editorCamera.transform.position;
             if (editorCamera.orthographic)
             {
-                // Масштабування для ортографічної камери
                 editorCamera.orthographicSize = Mathf.Clamp(editorCamera.orthographicSize - scrollInput * cameraZoomSpeed * Time.unscaledDeltaTime * 5f, initialCameraY / zoomFactor, initialCameraY);
             }
             else
             {
-                // Масштабування для перспективної камери (рух вперед/назад)
                 Vector3 zoomDirection = editorCamera.transform.forward;
                 currentPosition += zoomDirection * scrollInput * cameraZoomSpeed * Time.unscaledDeltaTime * 10f;
+                editorCamera.transform.position = currentPosition;
             }
         }
+    }
 
-        // Обмеження руху по XZ площині
+
+    private void ClampPitch()
+    {
+        Vector3 currentEuler = editorCamera.transform.rotation.eulerAngles;
+        float pitch = currentEuler.x;
+
+        if (pitch > 180) pitch -= 360;
+
+        pitch = Mathf.Clamp(pitch, MinPitch, MaxPitch);
+
+        editorCamera.transform.rotation = Quaternion.Euler(pitch, currentEuler.y, 0);
+    }
+
+    private void ApplyPositionClamping()
+    {
+        if (editorCamera == null) return;
+
+        Vector3 currentPosition = editorCamera.transform.position;
+
         Vector2 currentXZ = new Vector2(currentPosition.x, currentPosition.z);
         if (currentXZ.magnitude > maxCameraDistance)
         {
@@ -76,7 +125,6 @@ public class EditorCameraMovement : MonoBehaviour
             currentPosition.z = currentXZ.y;
         }
 
-        // Обмеження масштабування по осі Y для перспективної камери
         if (!editorCamera.orthographic)
         {
             float planeY = editorPlaneCollider != null ? editorPlaneCollider.bounds.max.y : 0f;
@@ -84,7 +132,6 @@ public class EditorCameraMovement : MonoBehaviour
             float maxZoomY = planeY + initialCameraY;
             currentPosition.y = Mathf.Clamp(currentPosition.y, minZoomY, maxZoomY);
         }
-
 
         editorCamera.transform.position = currentPosition;
     }

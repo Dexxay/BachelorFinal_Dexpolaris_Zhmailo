@@ -20,29 +20,24 @@ public class LevelEditor : MonoBehaviour
     public GameObject levelObjectsParent;
     public float gridSpacing = 1f;
     public float randomHeightRange = 0.5f;
-    public Collider editorPlaneCollider; // Collider площини редактора
+    public Collider editorPlaneCollider;
 
-    // Посилання на екземпляри спеціальних об'єктів
     [HideInInspector] public GameObject startAsteroidInstance = null;
     [HideInInspector] public GameObject finishAsteroidInstance = null;
 
-    // Менеджери
     private EditorCameraMovement cameraMovement;
     private EditorObjectPlacement objectPlacement;
     private EditorUIHandler uiHandler;
     private LevelSaveLoadManager saveLoadManager;
 
-    // Налаштування збереження
     private string saveSlot1 = "level_slot_1.dat";
     private string saveSlot2 = "level_slot_2.dat";
     private string saveSlot3 = "level_slot_3.dat";
 
-    // Ліміт часу рівня (керується UI)
     private float currentLevelTimeLimit = 60f;
 
     void Awake()
     {
-        // Отримуємо або створюємо компоненти менеджерів
         cameraMovement = GetComponent<EditorCameraMovement>();
         if (cameraMovement == null) cameraMovement = gameObject.AddComponent<EditorCameraMovement>();
 
@@ -58,43 +53,37 @@ public class LevelEditor : MonoBehaviour
 
     void Start()
     {
-        // Передача посилань та ініціалізація менеджерів
         cameraMovement.Init(GetComponent<Camera>(), editorPlaneCollider);
-        objectPlacement.Init(this, GetComponent<Camera>()); // Передаємо посилання на LevelEditor та Камеру
-        uiHandler.Init(this); // Передаємо посилання на LevelEditor
-        saveLoadManager.Init(this); // Передаємо посилання на LevelEditor
+        objectPlacement.Init(this, GetComponent<Camera>());
+        uiHandler.Init(this);
+        saveLoadManager.Init(this);
 
         if (levelObjectsParent == null)
         {
             levelObjectsParent = new GameObject("LevelObjects");
         }
 
-        // Заморожуємо час для редактора
-        Time.timeScale = 0f;
+        Time.timeScale = 1f;
 
         Debug.Log("Редактор рівня ініціалізовано.");
     }
 
     void Update()
     {
-        // Перевірка на відкриття/закриття меню паузи
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             uiHandler.TogglePauseMenu();
         }
 
-        // Якщо меню паузи активне, не обробляємо інше введення
         if (uiHandler.IsPauseMenuOpen())
         {
             return;
         }
 
-        // Обробка введення делегується відповідним менеджерам
         cameraMovement.HandleInput();
         objectPlacement.HandleInput();
     }
 
-    // --- Методи для доступу до даних та виклику функцій інших менеджерів ---
 
     public GameObject GetPrefabToSpawn(int objectNumber)
     {
@@ -139,11 +128,10 @@ public class LevelEditor : MonoBehaviour
         return null;
     }
 
-    // Методи, що викликаються з UI або іншими менеджерами
     public void SetTimeLimit(float time)
     {
         currentLevelTimeLimit = time;
-        uiHandler.UpdateTimeLimitText(currentLevelTimeLimit); // Оновлюємо текст через UIHandler
+        uiHandler.UpdateTimeLimitText(currentLevelTimeLimit);
     }
 
     public float GetTimeLimit()
@@ -165,20 +153,17 @@ public class LevelEditor : MonoBehaviour
     {
         if (levelObjectsParent != null)
         {
-            // Деструкція дочірніх об'єктів відбувається напряму
             foreach (Transform child in levelObjectsParent.transform)
             {
                 Destroy(child.gameObject);
             }
         }
-        // Скидаємо посилання на спеціальні об'єкти
         startAsteroidInstance = null;
         finishAsteroidInstance = null;
         uiHandler.ClearError();
         Debug.Log("Рівень очищено.");
     }
 
-    // Методи для відображення помилок (викликаються іншими менеджерами)
     public void ShowError(string message)
     {
         uiHandler.ShowError(message);
@@ -189,7 +174,6 @@ public class LevelEditor : MonoBehaviour
         uiHandler.ClearError();
     }
 
-    // Додаткові методи доступу до save file paths
     public string GetSaveFilePath(int slot)
     {
         string fileName;
