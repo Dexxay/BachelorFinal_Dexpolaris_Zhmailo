@@ -1,10 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using TMPro;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Linq;
 
 public class LevelEditor : MonoBehaviour
 {
@@ -23,181 +19,89 @@ public class LevelEditor : MonoBehaviour
     [Header("Налаштування редактора")]
     public GameObject levelObjectsParent;
     public float gridSpacing = 1f;
-    public float randomHeightRange = 0.5f; // Діапазон випадкової висоти
+    public float randomHeightRange = 0.5f;
+    public Collider editorPlaneCollider; // Collider площини редактора
 
-    [Header("UI Меню Паузи")]
-    public GameObject pauseMenuUI;
-    public Slider timeLimitSlider;
-    public TextMeshProUGUI timeLimitText;
-    public TextMeshProUGUI errorText;
+    // Посилання на екземпляри спеціальних об'єктів
+    [HideInInspector] public GameObject startAsteroidInstance = null;
+    [HideInInspector] public GameObject finishAsteroidInstance = null;
 
-    private int currentObjectToPlace = 2;
-    private Camera editorCamera;
-    private float levelTimeLimit = 60f;
+    // Менеджери
+    private EditorCameraMovement cameraMovement;
+    private EditorObjectPlacement objectPlacement;
+    private EditorUIHandler uiHandler;
+    private LevelSaveLoadManager saveLoadManager;
 
+    // Налаштування збереження
     private string saveSlot1 = "level_slot_1.dat";
     private string saveSlot2 = "level_slot_2.dat";
     private string saveSlot3 = "level_slot_3.dat";
 
-    private GameObject startAsteroidInstance = null;
-    private GameObject finishAsteroidInstance = null;
+    // Ліміт часу рівня (керується UI)
+    private float currentLevelTimeLimit = 60f;
 
-    private void Start()
+    void Awake()
     {
-        editorCamera = GetComponent<Camera>();
-        if (editorCamera == null)
-        {
-            Debug.LogError("Камера редактора не знайдена!");
-            enabled = false;
-        }
+        // Отримуємо або створюємо компоненти менеджерів
+        cameraMovement = GetComponent<EditorCameraMovement>();
+        if (cameraMovement == null) cameraMovement = gameObject.AddComponent<EditorCameraMovement>();
 
-        if (pauseMenuUI != null)
-        {
-            pauseMenuUI.SetActive(false);
-        }
+        objectPlacement = GetComponent<EditorObjectPlacement>();
+        if (objectPlacement == null) objectPlacement = gameObject.AddComponent<EditorObjectPlacement>();
 
-        if (timeLimitSlider != null)
-        {
-            timeLimitSlider.minValue = 30f;
-            timeLimitSlider.maxValue = 120f;
-            timeLimitSlider.value = levelTimeLimit;
-            UpdateTimeLimitText(levelTimeLimit);
-            timeLimitSlider.onValueChanged.AddListener(UpdateTimeLimit);
-        }
+        uiHandler = GetComponent<EditorUIHandler>();
+        if (uiHandler == null) uiHandler = gameObject.AddComponent<EditorUIHandler>();
 
-        if (errorText != null)
-        {
-            errorText.text = "";
-        }
+        saveLoadManager = GetComponent<LevelSaveLoadManager>();
+        if (saveLoadManager == null) saveLoadManager = gameObject.AddComponent<LevelSaveLoadManager>();
+    }
+
+    void Start()
+    {
+        // Передача посилань та ініціалізація менеджерів
+        cameraMovement.Init(GetComponent<Camera>(), editorPlaneCollider);
+        objectPlacement.Init(this, GetComponent<Camera>()); // Передаємо посилання на LevelEditor та Камеру
+        uiHandler.Init(this); // Передаємо посилання на LevelEditor
+        saveLoadManager.Init(this); // Передаємо посилання на LevelEditor
 
         if (levelObjectsParent == null)
         {
             levelObjectsParent = new GameObject("LevelObjects");
         }
 
-        // Забезпечуємо статичний час у редакторі
+        // Заморожуємо час для редактора
         Time.timeScale = 0f;
+
+        Debug.Log("Редактор рівня ініціалізовано.");
     }
 
-    private void Update()
+    void Update()
     {
-        // Перевірка видалення об'єкта правою кнопкою миші
-        if (Input.GetMouseButtonDown(1) && pauseMenuUI != null && !pauseMenuUI.activeSelf)
-        {
-            Ray ray = editorCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                if (hit.collider != null && hit.collider.transform.IsChildOf(levelObjectsParent.transform))
-                {
-                    GameObject objectToDelete = hit.collider.gameObject;
-
-                    // Перевірка, чи видаляється стартовий або фінішний астероїд
-                    if (objectToDelete == startAsteroidInstance)
-                    {
-                        startAsteroidInstance = null;
-                    }
-                    else if (objectToDelete == finishAsteroidInstance)
-                    {
-                        finishAsteroidInstance = null;
-                    }
-
-                    Destroy(objectToDelete);
-                }
-            }
-        }
-
-        // Розміщення об'єкта лівою кнопкою миші
-        if (Input.GetMouseButtonDown(0) && pauseMenuUI != null && !pauseMenuUI.activeSelf)
-        {
-            Ray ray = editorCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                if (hit.collider != null && hit.collider.CompareTag("EditorPlane"))
-                {
-                    Vector3 placementPosition = hit.point;
-                    placementPosition.x = Mathf.Round(placementPosition.x / gridSpacing) * gridSpacing;
-                    placementPosition.z = Mathf.Round(placementPosition.z / gridSpacing) * gridSpacing;
-                    placementPosition.y = Random.Range(0f, randomHeightRange); // Випадкова висота
-
-                    GameObject prefabToSpawn = GetPrefabToSpawn(currentObjectToPlace);
-
-                    if (prefabToSpawn != null)
-                    {
-                        ObjectRadius newObjectRadius = prefabToSpawn.GetComponent<ObjectRadius>();
-                        if (newObjectRadius != null)
-                        {
-                            bool canPlace = true;
-                            foreach (Transform child in levelObjectsParent.transform)
-                            {
-                                ObjectRadius existingObjectRadius = child.GetComponent<ObjectRadius>();
-                                if (existingObjectRadius != null)
-                                {
-                                    float distance = Vector3.Distance(placementPosition, child.position);
-                                    if (distance < newObjectRadius.radius + existingObjectRadius.radius)
-                                    {
-                                        canPlace = false;
-                                        ShowError("Об'єкти перетинаються. Розміщення неможливе.");
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (canPlace)
-                            {
-                                if ((currentObjectToPlace == 1 && startAsteroidInstance != null) || (currentObjectToPlace == 0 && finishAsteroidInstance != null))
-                                {
-                                    canPlace = false;
-                                    ShowError("Стартовий та фінішний астероїди можуть бути лише в одному екземплярі.");
-                                }
-                            }
-
-                            if (canPlace)
-                            {
-                                Quaternion randomYRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f); // Випадкове обертання навколо Y
-                                GameObject newObject = Instantiate(prefabToSpawn, placementPosition, Quaternion.identity, levelObjectsParent.transform);
-                                newObject.transform.rotation = Quaternion.Euler(90f, randomYRotation.eulerAngles.y, 0f); // Строго вверх з випадковим обертанням по Y
-                                if (currentObjectToPlace == 1) startAsteroidInstance = newObject;
-                                if (currentObjectToPlace == 0) finishAsteroidInstance = newObject;
-                                ClearError();
-                            }
-                        }
-                        else
-                        {
-                            Quaternion randomYRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f); // Випадкове обертання навколо Y
-                            GameObject newObject = Instantiate(prefabToSpawn, placementPosition, Quaternion.identity, levelObjectsParent.transform);
-                            newObject.transform.rotation = Quaternion.Euler(90f, randomYRotation.eulerAngles.y, 0f); // Строго вверх з випадковим обертанням по Y
-                            if (currentObjectToPlace == 1) startAsteroidInstance = prefabToSpawn;
-                            if (currentObjectToPlace == 0) finishAsteroidInstance = prefabToSpawn;
-                            ClearError();
-                        }
-                    }
-                }
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha1)) currentObjectToPlace = 1;
-        if (Input.GetKeyDown(KeyCode.Alpha2)) currentObjectToPlace = 2;
-        if (Input.GetKeyDown(KeyCode.Alpha3)) currentObjectToPlace = 3;
-        if (Input.GetKeyDown(KeyCode.Alpha4)) currentObjectToPlace = 4;
-        if (Input.GetKeyDown(KeyCode.Alpha5)) currentObjectToPlace = 5;
-        if (Input.GetKeyDown(KeyCode.Alpha6)) currentObjectToPlace = 6;
-        if (Input.GetKeyDown(KeyCode.Alpha7)) currentObjectToPlace = 7;
-        if (Input.GetKeyDown(KeyCode.Alpha8)) currentObjectToPlace = 8;
-        if (Input.GetKeyDown(KeyCode.Alpha9)) currentObjectToPlace = 9;
-        if (Input.GetKeyDown(KeyCode.Alpha0)) currentObjectToPlace = 0;
-
+        // Перевірка на відкриття/закриття меню паузи
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePauseMenu();
+            uiHandler.TogglePauseMenu();
         }
+
+        // Якщо меню паузи активне, не обробляємо інше введення
+        if (uiHandler.IsPauseMenuOpen())
+        {
+            return;
+        }
+
+        // Обробка введення делегується відповідним менеджерам
+        cameraMovement.HandleInput();
+        objectPlacement.HandleInput();
     }
 
-    private GameObject GetPrefabToSpawn(int objectNumber)
+    // --- Методи для доступу до даних та виклику функцій інших менеджерів ---
+
+    public GameObject GetPrefabToSpawn(int objectNumber)
     {
         switch (objectNumber)
         {
             case 1: return startAsteroidPrefab;
-            case 2: return randomAsteroidPrefabs.Count > 0 ? randomAsteroidPrefabs[Random.Range(0, randomAsteroidPrefabs.Count)] : null;
+            case 2: return (randomAsteroidPrefabs != null && randomAsteroidPrefabs.Count > 0) ? randomAsteroidPrefabs[Random.Range(0, randomAsteroidPrefabs.Count)] : null;
             case 3: return plasmaGunAsteroidPrefab;
             case 4: return laserSMGAsteroidPrefab;
             case 5: return ammo1AsteroidPrefab;
@@ -207,136 +111,15 @@ public class LevelEditor : MonoBehaviour
             case 9: return ufoSpawnerPrefab;
             case 0: return finishAsteroidPrefab;
             default:
-                Debug.LogWarning("Невідома цифра для розміщення об'єкта.");
+                Debug.LogWarning("Невідома цифра для розміщення об'єкта: " + objectNumber);
                 return null;
         }
     }
 
-    public void TogglePauseMenu()
-    {
-        if (pauseMenuUI != null)
-        {
-            pauseMenuUI.SetActive(!pauseMenuUI.activeSelf);
-        }
-    }
-
-    public void UpdateTimeLimit(float time)
-    {
-        levelTimeLimit = time;
-        UpdateTimeLimitText(levelTimeLimit);
-    }
-
-    private void UpdateTimeLimitText(float time)
-    {
-        if (timeLimitText != null)
-        {
-            timeLimitText.text = "Час: " + time.ToString("F0") + " сек.";
-        }
-    }
-
-    public void SaveLevel(int slot)
-    {
-        if (startAsteroidInstance == null || finishAsteroidInstance == null)
-        {
-            ShowError("На рівні повинні бути присутні стартовий та фінішний астероїди.");
-            return;
-        }
-        ClearError();
-
-        string filePath = GetSaveFilePath(slot);
-        if (string.IsNullOrEmpty(filePath)) return;
-
-        LevelData levelData = new LevelData();
-        levelData.timeLimit = levelTimeLimit;
-        levelData.placedObjects = new List<ObjectData>();
-
-        foreach (Transform child in levelObjectsParent.transform)
-        {
-            ObjectData objectData = new ObjectData();
-            objectData.prefabName = child.gameObject.name.Replace("(Clone)", "");
-            objectData.position = child.position;
-            objectData.rotation = child.rotation;
-            levelData.placedObjects.Add(objectData);
-        }
-
-        BinaryFormatter formatter = new BinaryFormatter();
-        FileStream file = File.Create(filePath);
-        formatter.Serialize(file, levelData);
-        file.Close();
-
-        Debug.Log("Рівень збережено в слот " + slot);
-    }
-
-    public void LoadLevel(int slot)
-    {
-        string filePath = GetSaveFilePath(slot);
-        if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
-        {
-            Debug.Log("Збереження у слоті " + slot + " не знайдено.");
-            return;
-        }
-
-        ClearLevel();
-        startAsteroidInstance = null;
-        finishAsteroidInstance = null;
-
-        BinaryFormatter formatter = new BinaryFormatter();
-        FileStream file = File.Open(filePath, FileMode.Open);
-        LevelData loadedData = (LevelData)formatter.Deserialize(file);
-        file.Close();
-
-        levelTimeLimit = loadedData.timeLimit;
-        timeLimitSlider.value = levelTimeLimit;
-        UpdateTimeLimitText(levelTimeLimit);
-
-        foreach (ObjectData objectData in loadedData.placedObjects)
-        {
-            GameObject prefabToInstantiate = GetPrefabByName(objectData.prefabName);
-            if (prefabToInstantiate != null)
-            {
-                GameObject instantiatedObject = Instantiate(prefabToInstantiate, objectData.position, objectData.rotation, levelObjectsParent.transform);
-                if (prefabToInstantiate == startAsteroidPrefab) startAsteroidInstance = instantiatedObject;
-                if (prefabToInstantiate == finishAsteroidPrefab) finishAsteroidInstance = instantiatedObject;
-            }
-            else
-            {
-                Debug.LogWarning("Префаб " + objectData.prefabName + " не знайдено!");
-            }
-        }
-
-        Debug.Log("Рівень завантажено зі слоту " + slot);
-        ClearError();
-    }
-
-    public void ClearLevel()
-    {
-        foreach (Transform child in levelObjectsParent.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        startAsteroidInstance = null;
-        finishAsteroidInstance = null;
-        ClearError();
-    }
-
-    private string GetSaveFilePath(int slot)
-    {
-        switch (slot)
-        {
-            case 1: return Application.persistentDataPath + "/" + saveSlot1;
-            case 2: return Application.persistentDataPath + "/" + saveSlot2;
-            case 3: return Application.persistentDataPath + "/" + saveSlot3;
-            default:
-                Debug.LogError("Невірний слот: " + slot);
-                return null;
-        }
-    }
-
-    private GameObject GetPrefabByName(string prefabName)
+    public GameObject GetPrefabByName(string prefabName)
     {
         if (startAsteroidPrefab != null && startAsteroidPrefab.name == prefabName) return startAsteroidPrefab;
         if (finishAsteroidPrefab != null && finishAsteroidPrefab.name == prefabName) return finishAsteroidPrefab;
-        foreach (var prefab in randomAsteroidPrefabs) if (prefab != null && prefab.name == prefabName) return prefab;
         if (plasmaGunAsteroidPrefab != null && plasmaGunAsteroidPrefab.name == prefabName) return plasmaGunAsteroidPrefab;
         if (laserSMGAsteroidPrefab != null && laserSMGAsteroidPrefab.name == prefabName) return laserSMGAsteroidPrefab;
         if (ammo1AsteroidPrefab != null && ammo1AsteroidPrefab.name == prefabName) return ammo1AsteroidPrefab;
@@ -344,38 +127,82 @@ public class LevelEditor : MonoBehaviour
         if (healthPackPrefab != null && healthPackPrefab.name == prefabName) return healthPackPrefab;
         if (turretPrefab != null && turretPrefab.name == prefabName) return turretPrefab;
         if (ufoSpawnerPrefab != null && ufoSpawnerPrefab.name == prefabName) return ufoSpawnerPrefab;
+
+        if (randomAsteroidPrefabs != null)
+        {
+            foreach (var prefab in randomAsteroidPrefabs)
+            {
+                if (prefab != null && prefab.name == prefabName) return prefab;
+            }
+        }
+        Debug.LogWarning($"Префаб з ім'ям '{prefabName}' не знайдено.");
         return null;
     }
 
-    private void ShowError(string message)
+    // Методи, що викликаються з UI або іншими менеджерами
+    public void SetTimeLimit(float time)
     {
-        if (errorText != null)
-        {
-            errorText.text = message;
-        }
-        Debug.LogError(message);
+        currentLevelTimeLimit = time;
+        uiHandler.UpdateTimeLimitText(currentLevelTimeLimit); // Оновлюємо текст через UIHandler
     }
 
-    private void ClearError()
+    public float GetTimeLimit()
     {
-        if (errorText != null)
-        {
-            errorText.text = "";
-        }
+        return currentLevelTimeLimit;
     }
-}
 
-[System.Serializable]
-public class ObjectData
-{
-    public string prefabName;
-    public Vector3 position;
-    public Quaternion rotation;
-}
+    public void SaveLevel(int slot)
+    {
+        saveLoadManager.SaveLevel(slot);
+    }
 
-[System.Serializable]
-public class LevelData
-{
-    public float timeLimit;
-    public List<ObjectData> placedObjects;
+    public void LoadLevel(int slot)
+    {
+        saveLoadManager.LoadLevel(slot);
+    }
+
+    public void ClearLevel()
+    {
+        if (levelObjectsParent != null)
+        {
+            // Деструкція дочірніх об'єктів відбувається напряму
+            foreach (Transform child in levelObjectsParent.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        // Скидаємо посилання на спеціальні об'єкти
+        startAsteroidInstance = null;
+        finishAsteroidInstance = null;
+        uiHandler.ClearError();
+        Debug.Log("Рівень очищено.");
+    }
+
+    // Методи для відображення помилок (викликаються іншими менеджерами)
+    public void ShowError(string message)
+    {
+        uiHandler.ShowError(message);
+    }
+
+    public void ClearError()
+    {
+        uiHandler.ClearError();
+    }
+
+    // Додаткові методи доступу до save file paths
+    public string GetSaveFilePath(int slot)
+    {
+        string fileName;
+        switch (slot)
+        {
+            case 1: fileName = saveSlot1; break;
+            case 2: fileName = saveSlot2; break;
+            case 3: fileName = saveSlot3; break;
+            default:
+                Debug.LogError("Невірний слот для збереження/завантаження: " + slot);
+                uiHandler.ShowError("Невірний слот збереження.");
+                return null;
+        }
+        return Path.Combine(Application.persistentDataPath, fileName);
+    }
 }

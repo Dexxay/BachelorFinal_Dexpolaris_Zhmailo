@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8374850470836364428}
   - component: {fileID: 8709912176443006435}
   - component: {fileID: -1870903987567765131}
+  - component: {fileID: -6579179303007547013}
   m_Layer: 3
   m_Name: PlasmaGun
   m_TagString: Untagged
@@ -27,9 +28,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8634228210856928777}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 25.9097, y: -1.3, z: -76.2}
-  m_LocalScale: {x: 430.1928, y: 337.04892, z: 100}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 430.1928, y: 98.15576, z: 472.4201}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7963022882008009471}
@@ -114,6 +115,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHeightOffset: 0.5
   maxSpeed: 0.5
+--- !u!114 &-6579179303007547013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8634228210856928777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d94f7be0972c5e240bf2c3a1972528f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 5
 --- !u!1001 &2383114532698685259
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -147,27 +161,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.00133511
+      value: 0.0267
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.033799995
+      value: -0.00032
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.000002065195
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0000020651953
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.7071067
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -175,7 +189,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5733312215930795444, guid: fc502e1477af5d8418cb48aa4a1f6e3b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z

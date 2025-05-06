@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 860a66ca4259b384f9ec01b687f71c3c, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.0031535141, g: 0.002727223, b: 0.003360356, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -269,6 +269,9 @@ GameObject:
   - component: {fileID: 103990399}
   - component: {fileID: 103990398}
   - component: {fileID: 103990401}
+  - component: {fileID: 103990404}
+  - component: {fileID: 103990403}
+  - component: {fileID: 103990402}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -357,14 +360,15 @@ MonoBehaviour:
   startAsteroidPrefab: {fileID: 5565089193286057817, guid: 863aaad1cfbe8d14c9c577c293dd9feb, type: 3}
   randomAsteroidPrefabs:
   - {fileID: 7595383637698718401, guid: d8e69bf6b688df24fa4f427ed08af9f0, type: 3}
-  - {fileID: 5565089193286057817, guid: 7adb144ae0ba4a84a935e044cc33e90f, type: 3}
-  - {fileID: 506478858615533027, guid: 0e4bf80bed4daa14fbb182d59f84c553, type: 3}
   - {fileID: 838480324339043715, guid: 04ff49aef352a2f44a3598b879b652ed, type: 3}
   - {fileID: 3139306858220373320, guid: ffd3872cd30cacd4facad8774f816535, type: 3}
   - {fileID: 8160597832626222208, guid: 8bf5861604733b340b227ed461dc0160, type: 3}
   - {fileID: 6112071871580608630, guid: 9579b8bf60fadd445a2c676e4be316e8, type: 3}
   - {fileID: 1215469302862457239, guid: 1fa74a736a8a71741ad2e7736a19f3c3, type: 3}
-  - {fileID: 1225487964274056372, guid: e353865ca3d58e04590270e4d2ae39d8, type: 3}
+  - {fileID: 1215469302862457239, guid: 1fa74a736a8a71741ad2e7736a19f3c3, type: 3}
+  - {fileID: 1215469302862457239, guid: 1fa74a736a8a71741ad2e7736a19f3c3, type: 3}
+  - {fileID: 8160597832626222208, guid: 8bf5861604733b340b227ed461dc0160, type: 3}
+  - {fileID: 6112071871580608630, guid: 9579b8bf60fadd445a2c676e4be316e8, type: 3}
   plasmaGunAsteroidPrefab: {fileID: 8634228210856928777, guid: 4d4ffb62c6d6ea04fb7f1d9eebbaa906, type: 3}
   laserSMGAsteroidPrefab: {fileID: 1763306445966746883, guid: f9d2717611e182a49a6bcc6857cc41c2, type: 3}
   ammo1AsteroidPrefab: {fileID: 7611627844883786497, guid: 1effc4d008e68a54c89f09975149c81e, type: 3}
@@ -375,11 +379,55 @@ MonoBehaviour:
   finishAsteroidPrefab: {fileID: 5957564763764216911, guid: b0ae82f16437d5441acd7aff9d0ef057, type: 3}
   levelObjectsParent: {fileID: 1897631583}
   gridSpacing: 1
-  randomHeightRange: 2
+  randomHeightRange: 5
+  editorPlaneCollider: {fileID: 1929779907}
+  startAsteroidInstance: {fileID: 0}
+  finishAsteroidInstance: {fileID: 0}
+--- !u!114 &103990402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103990397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1fde9cba3c322e4aa29a24627fb209b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &103990403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103990397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5eb0fab66d30314d86e61517f591a95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 891458837}
   timeLimitSlider: {fileID: 2008623680}
   timeLimitText: {fileID: 1844514663}
   errorText: {fileID: 2052214632}
+--- !u!114 &103990404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103990397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e875fe9bf9e14042b4a12d88fdc6e0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraMoveSpeed: 3500
+  cameraZoomSpeed: 1000
+  maxCameraDistance: 300
+  zoomFactor: 8
+  minZoomOffset: 0.1
 --- !u!1 &164622627
 GameObject:
   m_ObjectHideFlags: 0
@@ -771,7 +819,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -847,7 +895,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1311,7 +1359,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &891458838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2791,6 +2839,7 @@ GameObject:
   - component: {fileID: 1929779909}
   - component: {fileID: 1929779908}
   - component: {fileID: 1929779907}
+  - component: {fileID: 1929779911}
   m_Layer: 0
   m_Name: Plane
   m_TagString: EditorPlane
@@ -2832,7 +2881,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1dc551c2db5af9d479b348b9ad41e49a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2877,6 +2926,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!45 &1929779911
+Skybox:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929779906}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 0}
 --- !u!1 &2008623678
 GameObject:
   m_ObjectHideFlags: 0

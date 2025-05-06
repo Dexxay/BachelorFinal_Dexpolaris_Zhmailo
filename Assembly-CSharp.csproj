@@ -101,6 +101,10 @@
     <Compile Include="Assets\Scripts\UI\Results.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\LevelEditor.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\ObjectRadius.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\EditorCameraMovement.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\EditorObjectPlacement.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\EditorUIHandler.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\LevelSaveLoadManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

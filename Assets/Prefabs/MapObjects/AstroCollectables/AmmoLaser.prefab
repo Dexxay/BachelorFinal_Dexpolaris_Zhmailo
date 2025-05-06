@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7659054908095293828}
   - component: {fileID: 7398513720440230123}
   - component: {fileID: 8771367917460848273}
+  - component: {fileID: -4352299856972013886}
   m_Layer: 3
   m_Name: AmmoLaser
   m_TagString: Untagged
@@ -27,9 +28,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7611627844883786497}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -7.8282, y: -1.3, z: -77.62}
-  m_LocalScale: {x: 395.98993, y: 421.91782, z: 100}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 395.98993, y: 157.97868, z: 592.76904}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8860852598887429905}
@@ -114,6 +115,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHeightOffset: 0.5
   maxSpeed: 0.5
+--- !u!114 &-4352299856972013886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7611627844883786497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d94f7be0972c5e240bf2c3a1972528f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 5
 --- !u!1001 &4544836138112281523
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -143,35 +157,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.000341453
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0006162202
+      value: 0.0158
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.026699997
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071067
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -179,7 +193,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5037999793889238178, guid: 7759c66644e949549a18134e08ed3690, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7759c66644e949549a18134e08ed3690, type: 3}
