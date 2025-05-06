@@ -345,6 +345,7 @@ FodyWeavers.xsd
 [Bb]uild/
 [Bb]uilds/
 UserSettings/
+Recordings/
 
 # Asset meta data
 *.pidb
