@@ -64,16 +64,22 @@
     <Compile Include="Assets\Scripts\Enemies\LaserBeamAutoDestroy.cs" />
     <Compile Include="Assets\Scripts\Player\MainPlayer.cs" />
     <Compile Include="Assets\Scripts\UI\MenuScripts\InfoMenu.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\EditorCameraMovement.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\EditorObjectPlacement.cs" />
     <Compile Include="Assets\Scripts\Player\ScoreManager.cs" />
     <Compile Include="Assets\Scripts\UI\MenuScripts\LevelMenu.cs" />
     <Compile Include="Assets\Scripts\Enemies\SpawnerScript.cs" />
     <Compile Include="Assets\Scripts\Collectable\GunCollectable.cs" />
     <Compile Include="Assets\Scripts\UI\MapTimer.cs" />
     <Compile Include="Assets\Scripts\Collectable\TestDamageCollectable.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\LevelSaveLoadManager.cs" />
     <Compile Include="Assets\Scripts\SingletonesManagers\PauseManager.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\ObjectRadius.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerHealthManager.cs" />
     <Compile Include="Assets\Scripts\Player\WeaponManager.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\LevelEditor.cs" />
     <Compile Include="Assets\Scripts\Visuals\VerticalPendulumMover.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\EditorUIHandler.cs" />
     <Compile Include="Assets\Scripts\Enemies\GhostBehaviour.cs" />
     <Compile Include="Assets\Scripts\Collectable\AmmoCollectable.cs" />
     <Compile Include="Assets\Scripts\Weapons\WeaponScript.cs" />
@@ -99,12 +105,8 @@
     <Compile Include="Assets\Scripts\UI\MenuScripts\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\Enemies\NavAgentTest.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\LevelEditor.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\ObjectRadius.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\EditorCameraMovement.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\EditorObjectPlacement.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\EditorUIHandler.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\LevelSaveLoadManager.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\PlacedObjectInfo.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\GameLevelLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

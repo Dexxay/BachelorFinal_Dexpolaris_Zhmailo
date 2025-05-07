@@ -13,7 +13,7 @@ public class EditorUIHandler : MonoBehaviour
 
     private LevelEditor levelEditor;
 
-    private Coroutine clearErrorCoroutine;
+    private Coroutine clearMessageCoroutine;
 
     public void Init(LevelEditor editor)
     {
@@ -77,7 +77,18 @@ public class EditorUIHandler : MonoBehaviour
         if (timeLimitText != null)
         {
             timeLimitText.text = "„ас: " + time.ToString("F0") + " сек.";
+            timeLimitSlider.value = time;
         }
+    }
+
+    public void SetRedColor ()
+    {
+        errorText.color = Color.red;
+    }
+
+    public void SetGreenColor()
+    {
+        errorText.color = Color.green;
     }
 
     public void ShowError(string message)
@@ -85,25 +96,25 @@ public class EditorUIHandler : MonoBehaviour
         if (errorText != null)
         {
             errorText.text = message;
-            if (clearErrorCoroutine != null)
+            if (clearMessageCoroutine != null)
             {
-                StopCoroutine(clearErrorCoroutine);
+                StopCoroutine(clearMessageCoroutine);
             }
-            clearErrorCoroutine = StartCoroutine(ClearErrorAfterDelay(3f));
+            clearMessageCoroutine = StartCoroutine(ClearErrorAfterDelay(3f));
         }
         Debug.Log(message);
     }
 
-    public void ClearError()
+    public void ClearMessage()
     {
         if (errorText != null)
         {
             errorText.text = "";
         }
-        if (clearErrorCoroutine != null)
+        if (clearMessageCoroutine != null)
         {
-            StopCoroutine(clearErrorCoroutine);
-            clearErrorCoroutine = null;
+            StopCoroutine(clearMessageCoroutine);
+            clearMessageCoroutine = null;
         }
     }
 
@@ -114,6 +125,6 @@ public class EditorUIHandler : MonoBehaviour
         {
             errorText.text = "";
         }
-        clearErrorCoroutine = null;
+        clearMessageCoroutine = null;
     }
 }
