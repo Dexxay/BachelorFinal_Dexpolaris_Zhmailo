@@ -2,18 +2,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System;
+using UnityEngine.SceneManagement;
 
 public class EditorUIHandler : MonoBehaviour
 {
-    [Header("UI Меню Паузи")]
+    [Header("Pause Menu UI")]
     public GameObject pauseMenuUI;
     public Slider timeLimitSlider;
     public TextMeshProUGUI timeLimitText;
     public TextMeshProUGUI errorText;
 
-    private LevelEditor levelEditor;
+    [Header("Confirmation Dialog UI")]
+    public GameObject confirmationDialogPanel;
+    public TextMeshProUGUI confirmationMessageText;
+    public Button yesButton;
+    public Button noButton;
 
+    private LevelEditor levelEditor;
     private Coroutine clearMessageCoroutine;
+    private Action onConfirmAction;
 
     public void Init(LevelEditor editor)
     {
@@ -25,45 +33,85 @@ public class EditorUIHandler : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Не призначено pauseMenuUI в EditorUIHandler!");
+            Debug.LogError("pauseMenuUI not assigned in EditorUIHandler!");
         }
 
         if (timeLimitSlider != null)
         {
             timeLimitSlider.minValue = 30f;
             timeLimitSlider.maxValue = 120f;
-            timeLimitSlider.value = levelEditor.GetTimeLimit();
-            UpdateTimeLimitText(levelEditor.GetTimeLimit());
-            timeLimitSlider.onValueChanged.AddListener(levelEditor.SetTimeLimit);
+            timeLimitSlider.onValueChanged.AddListener(SetTimeLimitFromSlider);
         }
         else
         {
-            Debug.LogError("Не призначено timeLimitSlider в EditorUIHandler!");
+            Debug.LogError("timeLimitSlider not assigned in EditorUIHandler!");
         }
 
 
         if (timeLimitText == null)
         {
-            Debug.LogError("Не призначено timeLimitText в EditorUIHandler!");
+            Debug.LogError("timeLimitText not assigned in EditorUIHandler!");
         }
 
-        if (errorText != null)
+        if (errorText == null)
         {
-            errorText.text = "";
+            Debug.LogError("errorText not assigned in EditorUIHandler!");
+        }
+
+        if (confirmationDialogPanel != null)
+        {
+            confirmationDialogPanel.SetActive(false);
         }
         else
         {
-            Debug.LogError("Не призначено errorText в EditorUIHandler!");
+            Debug.LogError("confirmationDialogPanel not assigned in EditorUIHandler!");
         }
 
+        if (yesButton != null)
+        {
+            yesButton.onClick.AddListener(OnYesClicked);
+        }
+        else
+        {
+            Debug.LogError("yesButton not assigned in EditorUIHandler!");
+        }
+
+        if (noButton != null)
+        {
+            noButton.onClick.AddListener(OnNoClicked);
+        }
+        else
+        {
+            Debug.LogError("noButton not assigned in EditorUIHandler!");
+        }
+        if (levelEditor != null)
+        {
+            UpdateTimeLimitText(levelEditor.GetTimeLimit());
+            if (timeLimitSlider != null) timeLimitSlider.value = levelEditor.GetTimeLimit();
+        }
+    }
+
+    private void SetTimeLimitFromSlider(float value)
+    {
+        if (levelEditor != null)
+        {
+            levelEditor.SetTimeLimit(value);
+        }
     }
 
     public void TogglePauseMenu()
     {
         if (pauseMenuUI != null)
         {
-            bool isOpening = !pauseMenuUI.activeSelf;
-            pauseMenuUI.SetActive(isOpening);
+            bool isActive = !pauseMenuUI.activeSelf;
+            pauseMenuUI.SetActive(isActive);
+            Time.timeScale = isActive ? 0f : 1f;
+
+            if (isActive && levelEditor != null)
+            {
+                UpdateTimeLimitText(levelEditor.GetTimeLimit());
+                if (timeLimitSlider != null) timeLimitSlider.value = levelEditor.GetTimeLimit();
+            }
         }
     }
 
@@ -72,23 +120,27 @@ public class EditorUIHandler : MonoBehaviour
         return pauseMenuUI != null && pauseMenuUI.activeSelf;
     }
 
+    public bool IsConfirmationDialogOpen()
+    {
+        return confirmationDialogPanel != null && confirmationDialogPanel.activeSelf;
+    }
+
     public void UpdateTimeLimitText(float time)
     {
         if (timeLimitText != null)
         {
-            timeLimitText.text = "Час: " + time.ToString("F0") + " сек.";
-            timeLimitSlider.value = time;
+            timeLimitText.text = "Time: " + time.ToString("F0") + " sec.";
         }
     }
 
-    public void SetRedColor ()
+    public void SetRedColor()
     {
-        errorText.color = Color.red;
+        if (errorText != null) errorText.color = Color.red;
     }
 
     public void SetGreenColor()
     {
-        errorText.color = Color.green;
+        if (errorText != null) errorText.color = Color.green;
     }
 
     public void ShowError(string message)
@@ -121,10 +173,93 @@ public class EditorUIHandler : MonoBehaviour
     private IEnumerator ClearErrorAfterDelay(float delay)
     {
         yield return new WaitForSecondsRealtime(delay);
-        if (errorText != null)
+        ClearMessage();
+    }
+
+    public void ShowConfirmationDialog(string message, Action confirmAction)
+    {
+        if (confirmationDialogPanel != null && confirmationMessageText != null)
         {
-            errorText.text = "";
+            confirmationMessageText.text = message;
+            onConfirmAction = confirmAction;
+            confirmationDialogPanel.SetActive(true);
+            if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+            Time.timeScale = 0f;
         }
-        clearMessageCoroutine = null;
+        else
+        {
+            Debug.LogError("Confirmation dialog components are not configured!");
+        }
+    }
+
+    public void HideConfirmationDialog()
+    {
+        if (confirmationDialogPanel != null)
+        {
+            confirmationDialogPanel.SetActive(false);
+        }
+        Time.timeScale = 1f;
+    }
+
+    public void OnYesClicked()
+    {
+        onConfirmAction?.Invoke();
+        HideConfirmationDialog();
+    }
+
+    public void OnNoClicked()
+    {
+        onConfirmAction = null;
+        HideConfirmationDialog();
+        if (pauseMenuUI != null && !pauseMenuUI.activeSelf)
+        {
+            Time.timeScale = 1f;
+        }
+    }
+
+    public void MainMenuButton_Clicked()
+    {
+        ShowConfirmationDialog("Return to main menu?\nUnsaved changes will be lost.",
+            () => {
+                if (levelEditor != null) levelEditor.GoToMainMenuConfirmed();
+            });
+    }
+
+    public void SaveLevelButton_Clicked(int slot)
+    {
+        ShowConfirmationDialog($"Save level to slot {slot}?",
+            () => {
+                if (levelEditor != null) levelEditor.SaveLevelConfirmed(slot);
+            });
+    }
+
+    public void LoadLevelButton_Clicked(int slot)
+    {
+        ShowConfirmationDialog($"Load level from slot {slot}?\nUnsaved changes in the current level will be lost.",
+           () => {
+               if (levelEditor != null) levelEditor.LoadLevelConfirmed(slot);
+           });
+    }
+
+    public void DeleteLevelButton_Clicked(int slot)
+    {
+        ShowConfirmationDialog($"Delete level in slot {slot}?",
+            () => {
+                if (levelEditor != null) levelEditor.DeleteLevelConfirmed(slot);
+            });
+    }
+
+
+    public void ClearLevelButton_Clicked()
+    {
+        ShowConfirmationDialog("Clear all objects on the level?",
+            () => {
+                if (levelEditor != null) levelEditor.ClearAllObjectsConfirmed();
+            });
+    }
+
+    public void ShowDeleteObjectConfirmation(string objectName, Action confirmAction)
+    {
+        ShowConfirmationDialog($"Are you sure you want to delete '{objectName}'?", confirmAction);
     }
 }

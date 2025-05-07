@@ -53,89 +53,56 @@ public class EditorObjectPlacement : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha8)) currentObjectToPlace = 8;
         else if (Input.GetKeyDown(KeyCode.Alpha9)) currentObjectToPlace = 9;
         else if (Input.GetKeyDown(KeyCode.Alpha0)) currentObjectToPlace = 0;
-
     }
 
     private void HandleObjectPlacementAndDeletion()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
             Ray ray = editorCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
-                if (hit.collider != null && hit.collider.transform.IsChildOf(levelEditor.levelObjectsParent.transform))
-                {
-                    Transform hitTransform = hit.collider.transform;
-                    Transform rootParent = hitTransform;
-                    while (rootParent.parent != levelEditor.levelObjectsParent.transform && rootParent.parent != null)
-                    {
-                        rootParent = rootParent.parent;
-                    }
-                    GameObject objectToDelete = rootParent.gameObject;
-
-
-                    if (objectToDelete == levelEditor.startAsteroidInstance)
-                    {
-                        levelEditor.startAsteroidInstance = null;
-                    }
-                    else if (objectToDelete == levelEditor.finishAsteroidInstance)
-                    {
-                        levelEditor.finishAsteroidInstance = null;
-                    }
-
-                    Destroy(objectToDelete);
-                    levelEditor.ClearMessage();
-                }
-            }
-        }
-
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = editorCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                if (hit.collider != null && (editorPlaneCollider == hit.collider || hit.collider.CompareTag("EditorPlane")))
+                if (hit.collider == editorPlaneCollider && Input.GetMouseButtonDown(0))
                 {
                     Vector3 placementPosition = hit.point;
-                    placementPosition.x = Mathf.Round(placementPosition.x / gridSpacing) * gridSpacing;
-                    placementPosition.z = Mathf.Round(placementPosition.z / gridSpacing) * gridSpacing;
-                    placementPosition.y = hit.point.y + Random.Range(0f, randomHeightRange);
+                    placementPosition.y += Random.Range(0f, randomHeightRange);
 
-                    GameObject prefabToSpawn = levelEditor.GetPrefabToSpawn(currentObjectToPlace);
+                    if (gridSpacing > 0)
+                    {
+                        placementPosition.x = Mathf.Round(placementPosition.x / gridSpacing) * gridSpacing;
+                        placementPosition.z = Mathf.Round(placementPosition.z / gridSpacing) * gridSpacing;
+                    }
+
+                    GameObject prefabToSpawn = levelEditor.GetPrefabByType(currentObjectToPlace);
 
                     if (prefabToSpawn != null)
                     {
                         if (currentObjectToPlace == 1 && levelEditor.startAsteroidInstance != null)
                         {
-                            levelEditor.ShowMessage("Start asteroid is already placed.", true);
+                            levelEditor.ShowMessage("Start asteroid already placed. Delete the old one to place a new one.", true);
                             return;
                         }
                         if (currentObjectToPlace == 0 && levelEditor.finishAsteroidInstance != null)
                         {
-                            levelEditor.ShowMessage("Finish asteroid is already placed.", true);
+                            levelEditor.ShowMessage("Finish asteroid already placed. Delete the old one to place a new one.", true);
                             return;
                         }
 
                         bool canPlace = true;
                         ObjectRadius newObjectRadiusComponent = prefabToSpawn.GetComponent<ObjectRadius>();
-                        if (newObjectRadiusComponent != null)
+                        float newObjectRadius = newObjectRadiusComponent != null ? newObjectRadiusComponent.radius : 1f;
+
+                        foreach (Transform child in levelEditor.levelObjectsParent.transform)
                         {
-                            float newRadius = newObjectRadiusComponent.radius;
-                            foreach (Transform child in levelEditor.levelObjectsParent.transform)
+                            ObjectRadius existingObjectRadiusComponent = child.GetComponent<ObjectRadius>();
+                            if (existingObjectRadiusComponent != null)
                             {
-                                ObjectRadius existingObjectRadiusComponent = child.GetComponent<ObjectRadius>();
-                                if (existingObjectRadiusComponent != null)
+                                float distance = Vector3.Distance(placementPosition, child.position);
+                                if (distance < newObjectRadius + existingObjectRadiusComponent.radius)
                                 {
-                                    float existingRadius = existingObjectRadiusComponent.radius;
-                                    Vector2 posNew = new Vector2(placementPosition.x, placementPosition.z);
-                                    Vector2 posExisting = new Vector2(child.position.x, child.position.z);
-                                    if (Vector2.Distance(posNew, posExisting) < newRadius + existingRadius)
-                                    {
-                                        canPlace = false;
-                                        levelEditor.ShowMessage("Objects are overlapping.", true);
-                                        break;
-                                    }
+                                    canPlace = false;
+                                    levelEditor.ShowMessage("Objects are overlapping.", true);
+                                    break;
                                 }
                             }
                         }
@@ -147,8 +114,8 @@ public class EditorObjectPlacement : MonoBehaviour
 
                             GameObject newObject = Instantiate(prefabToSpawn, placementPosition, objectRotation, levelEditor.levelObjectsParent.transform);
 
-
-                            PlacedObjectInfo objectInfo = newObject.AddComponent<PlacedObjectInfo>();
+                            PlacedObjectInfo objectInfo = newObject.GetComponent<PlacedObjectInfo>();
+                            if (objectInfo == null) objectInfo = newObject.AddComponent<PlacedObjectInfo>();
                             objectInfo.originalPrefabName = prefabToSpawn.name;
 
                             if (currentObjectToPlace == 1) levelEditor.startAsteroidInstance = newObject;
@@ -160,6 +127,23 @@ public class EditorObjectPlacement : MonoBehaviour
                     else
                     {
                         levelEditor.ShowMessage("Selected prefab not found or not specified.", true);
+                    }
+                }
+                else if (Input.GetMouseButtonDown(1))
+                {
+                    PlacedObjectInfo objectToRemoveInfo = hit.collider.GetComponentInParent<PlacedObjectInfo>();
+                    if (objectToRemoveInfo != null && objectToRemoveInfo.transform.parent == levelEditor.levelObjectsParent.transform)
+                    {
+                        if (objectToRemoveInfo.gameObject == levelEditor.startAsteroidInstance)
+                        {
+                            levelEditor.startAsteroidInstance = null;
+                        }
+                        if (objectToRemoveInfo.gameObject == levelEditor.finishAsteroidInstance)
+                        {
+                            levelEditor.finishAsteroidInstance = null;
+                        }
+                        Destroy(objectToRemoveInfo.gameObject);
+                        levelEditor.ShowMessage("Object deleted.", false);
                     }
                 }
             }

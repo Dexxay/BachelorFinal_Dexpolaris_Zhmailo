@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public class LevelEditor : MonoBehaviour
 {
@@ -43,53 +44,42 @@ public class LevelEditor : MonoBehaviour
         uiHandler = GetComponent<EditorUIHandler>();
         saveLoadManager = GetComponent<LevelSaveLoadManager>();
 
-        if (cameraMovement == null) Debug.LogError("EditorCameraMovement component not found!");
-        if (objectPlacement == null) Debug.LogError("EditorObjectPlacement component not found!");
-        if (uiHandler == null) Debug.LogError("EditorUIHandler component not found!");
-        if (saveLoadManager == null) Debug.LogError("LevelSaveLoadManager component not found!");
+        if (cameraMovement == null) Debug.LogError("EditorCameraMovement not found!");
+        if (objectPlacement == null) Debug.LogError("EditorObjectPlacement not found!");
+        if (uiHandler == null) Debug.LogError("EditorUIHandler not found!");
+        if (saveLoadManager == null) Debug.LogError("LevelSaveLoadManager not found!");
+
+        if (uiHandler != null) uiHandler.Init(this);
+        if (cameraMovement != null && editorPlaneCollider != null && Camera.main != null) cameraMovement.Init(Camera.main, editorPlaneCollider);
+        if (objectPlacement != null && Camera.main != null) objectPlacement.Init(this, Camera.main);
 
         if (levelObjectsParent == null)
         {
-            Debug.LogError("Level Objects Parent not assigned!");
-            enabled = false;
-            return;
+            levelObjectsParent = new GameObject("LevelObjectsParent");
+            Debug.LogWarning("levelObjectsParent was not assigned, a new one has been created.");
         }
-        if (editorPlaneCollider == null)
-        {
-            Debug.LogError("Editor plane collider not assigned!");
-            enabled = false;
-            return;
-        }
-
-        cameraMovement.Init(Camera.main, editorPlaneCollider);
-        objectPlacement.Init(this, Camera.main);
-        uiHandler.Init(this);
-        saveLoadManager.Init(this);
     }
 
     void Update()
     {
+        bool isConfirmationDialogOpen = uiHandler != null && uiHandler.IsConfirmationDialogOpen();
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (uiHandler != null)
+            if (uiHandler != null && !isConfirmationDialogOpen)
             {
                 uiHandler.TogglePauseMenu();
             }
         }
 
-        if (uiHandler != null && uiHandler.IsPauseMenuOpen())
+        if (uiHandler != null && uiHandler.IsPauseMenuOpen() || isConfirmationDialogOpen)
         {
             return;
         }
 
+
         if (cameraMovement != null) cameraMovement.HandleInput();
         if (objectPlacement != null) objectPlacement.HandleInput();
-    }
-
-    public void SetTimeLimit(float time)
-    {
-        currentLevelTimeLimit = time;
-        uiHandler.UpdateTimeLimitText(currentLevelTimeLimit);
     }
 
     public float GetTimeLimit()
@@ -97,68 +87,153 @@ public class LevelEditor : MonoBehaviour
         return currentLevelTimeLimit;
     }
 
-    public void SaveLevel(int slot)
+    public void SetTimeLimit(float newTimeLimit)
     {
-        saveLoadManager.SaveLevel(slot);
-    }
-
-    public void LoadLevel(int slot)
-    {
-        saveLoadManager.LoadLevel(slot);
-    }
-
-    public void ClearLevel()
-    {
-        if (levelObjectsParent != null)
+        currentLevelTimeLimit = Mathf.Clamp(newTimeLimit, 30f, 120f);
+        if (uiHandler != null)
         {
-            List<GameObject> childrenToDestroy = new List<GameObject>();
-            foreach (Transform child in levelObjectsParent.transform)
-            {
-                childrenToDestroy.Add(child.gameObject);
-            }
-            foreach (GameObject child in childrenToDestroy)
-            {
-                DestroyImmediate(child);
-            }
+            uiHandler.UpdateTimeLimitText(currentLevelTimeLimit);
         }
-        startAsteroidInstance = null;
-        finishAsteroidInstance = null;
-        if (uiHandler != null) uiHandler.ClearMessage();
-        Debug.Log("Level cleared.");
-        ShowMessage("Level cleared. ", false);
+        Debug.Log("Level time limit set to: " + currentLevelTimeLimit);
     }
 
     public void ShowMessage(string message, bool isError)
     {
+        if (uiHandler == null) return;
+
         if (isError)
+        {
             uiHandler.SetRedColor();
+        }
         else
+        {
             uiHandler.SetGreenColor();
-        if (uiHandler != null) uiHandler.ShowError(message);
+        }
+        uiHandler.ShowError(message);
     }
 
     public void ClearMessage()
     {
-        if (uiHandler != null) uiHandler.ClearMessage();
+        if (uiHandler != null)
+        {
+            uiHandler.ClearMessage();
+        }
     }
 
-    public string GetSaveFilePath(int slot)
+    public void GoToMainMenuConfirmed()
     {
-        return saveLoadManager.GetSaveFilePath(slot);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
     }
 
-    public GameObject GetPrefabToSpawn(int objectType)
+    public void SaveLevelConfirmed(int slot)
+    {
+        if (saveLoadManager == null || levelObjectsParent == null)
+        {
+            ShowMessage("Error: Save components are not configured.", true);
+            return;
+        }
+
+        if (startAsteroidInstance == null)
+        {
+            ShowMessage("Error: Start asteroid is not placed.", true);
+            return;
+        }
+        if (finishAsteroidInstance == null)
+        {
+            ShowMessage("Error: Finish asteroid is not placed.", true);
+            return;
+        }
+
+        string filePath = GetSavePathBySlot(slot);
+        saveLoadManager.SaveLevel(filePath, levelObjectsParent, currentLevelTimeLimit, startAsteroidInstance, finishAsteroidInstance);
+        ShowMessage($"Level saved to slot {slot}.", false);
+    }
+
+    public void LoadLevelConfirmed(int slot)
+    {
+        if (saveLoadManager == null || levelObjectsParent == null)
+        {
+            ShowMessage("Error: Load components are not configured.", true);
+            return;
+        }
+        ClearAllObjectsConfirmedInternal();
+        string filePath = GetSavePathBySlot(slot);
+        LevelData loadedData = saveLoadManager.LoadLevelForEditor(filePath, levelObjectsParent, this);
+        if (loadedData != null)
+        {
+            currentLevelTimeLimit = loadedData.timeLimit;
+            if (uiHandler != null) uiHandler.UpdateTimeLimitText(currentLevelTimeLimit);
+
+            startAsteroidInstance = null;
+            finishAsteroidInstance = null;
+
+            foreach (Transform child in levelObjectsParent.transform)
+            {
+                PlacedObjectInfo objInfo = child.GetComponent<PlacedObjectInfo>();
+                if (objInfo != null && objInfo.originalPrefabName != null)
+                {
+                    if (startAsteroidPrefab != null && objInfo.originalPrefabName == startAsteroidPrefab.name)
+                    {
+                        startAsteroidInstance = child.gameObject;
+                    }
+                    if (finishAsteroidPrefab != null && objInfo.originalPrefabName == finishAsteroidPrefab.name)
+                    {
+                        finishAsteroidInstance = child.gameObject;
+                    }
+                }
+            }
+
+            ShowMessage($"Level loaded from slot {slot}.", false);
+        }
+        else
+        {
+            ShowMessage($"Error loading level from slot {slot}.", true);
+        }
+    }
+
+    public void DeleteLevelConfirmed(int slot)
+    {
+        if (saveLoadManager == null)
+        {
+            ShowMessage("Error: Save/Load component is not configured.", true);
+            return;
+        }
+        string filePath = GetSavePathBySlot(slot);
+        if (saveLoadManager.DeleteLevel(filePath))
+        {
+            ShowMessage($"Level in slot {slot} deleted.", false);
+        }
+        else
+        {
+            ShowMessage($"Failed to delete level in slot {slot}. File may not exist.", true);
+        }
+    }
+
+    private void ClearAllObjectsConfirmedInternal()
+    {
+        if (levelObjectsParent == null) return;
+
+        foreach (Transform child in levelObjectsParent.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        startAsteroidInstance = null;
+        finishAsteroidInstance = null;
+        ShowMessage("All objects cleared.", false);
+    }
+
+    public void ClearAllObjectsConfirmed()
+    {
+        ClearAllObjectsConfirmedInternal();
+    }
+
+    public GameObject GetPrefabByType(int objectType)
     {
         switch (objectType)
         {
             case 1: return startAsteroidPrefab;
-            case 2:
-                if (randomAsteroidPrefabs != null && randomAsteroidPrefabs.Count > 0)
-                {
-                    return randomAsteroidPrefabs[Random.Range(0, randomAsteroidPrefabs.Count)];
-                }
-                Debug.LogWarning("Random asteroid prefabs list is empty!");
-                return null;
+            case 2: return randomAsteroidPrefabs != null && randomAsteroidPrefabs.Count > 0 ? randomAsteroidPrefabs[UnityEngine.Random.Range(0, randomAsteroidPrefabs.Count)] : null;
             case 3: return plasmaGunAsteroidPrefab;
             case 4: return laserSMGAsteroidPrefab;
             case 5: return ammo1AsteroidPrefab;
@@ -168,7 +243,7 @@ public class LevelEditor : MonoBehaviour
             case 9: return ufoSpawnerPrefab;
             case 0: return finishAsteroidPrefab;
             default:
-                Debug.LogWarning($"Invalid object type requested: {objectType}");
+                Debug.LogWarning($"Unknown object type requested: {objectType}");
                 return null;
         }
     }
@@ -192,7 +267,20 @@ public class LevelEditor : MonoBehaviour
         if (turretPrefab != null && turretPrefab.name == prefabName) return turretPrefab;
         if (ufoSpawnerPrefab != null && ufoSpawnerPrefab.name == prefabName) return ufoSpawnerPrefab;
 
-        Debug.LogWarning($"Prefab with name '{prefabName}' not found in LevelEditor.");
+        Debug.LogWarning($"Prefab with name '{prefabName}' not found in LevelEditor's prefab list.");
         return null;
+    }
+
+    private string GetSavePathBySlot(int slot)
+    {
+        switch (slot)
+        {
+            case 1: return Path.Combine(Application.persistentDataPath, saveSlot1);
+            case 2: return Path.Combine(Application.persistentDataPath, saveSlot2);
+            case 3: return Path.Combine(Application.persistentDataPath, saveSlot3);
+            default:
+                Debug.LogError($"Invalid save slot: {slot}");
+                return null;
+        }
     }
 }

@@ -56,7 +56,6 @@ public struct SerializableQuaternion
     }
 }
 
-
 [System.Serializable]
 public class ObjectData
 {
@@ -65,250 +64,183 @@ public class ObjectData
     public SerializableQuaternion rotation;
     public bool isStartAsteroid;
     public bool isFinishAsteroid;
+
+    public ObjectData(GameObject obj, GameObject startInstance, GameObject finishInstance)
+    {
+        PlacedObjectInfo placedInfo = obj.GetComponent<PlacedObjectInfo>();
+        if (placedInfo != null)
+        {
+            prefabName = placedInfo.originalPrefabName;
+        }
+        else
+        {
+            prefabName = obj.name.Replace("(Clone)", "").Trim();
+            Debug.LogWarning($"Object {obj.name} does not have PlacedObjectInfo. Using object name as prefab name.");
+        }
+
+        position = obj.transform.position;
+        rotation = obj.transform.rotation;
+        isStartAsteroid = (obj == startInstance);
+        isFinishAsteroid = (obj == finishInstance);
+    }
 }
 
 [System.Serializable]
 public class LevelData
 {
+    public List<ObjectData> objects;
     public float timeLimit;
-    public List<ObjectData> placedObjects;
 }
-
 
 public class LevelSaveLoadManager : MonoBehaviour
 {
-    private LevelEditor levelEditor;
-
-    public string saveSlot1 = "level_slot_1.dat";
-    public string saveSlot2 = "level_slot_2.dat";
-    public string saveSlot3 = "level_slot_3.dat";
-
-
-    public void Init(LevelEditor editor)
+    public void SaveLevel(string filePath, GameObject levelObjectsParent, float timeLimit, GameObject startAsteroidInstance, GameObject finishAsteroidInstance)
     {
-        levelEditor = editor;
-        if (levelEditor == null)
+        if (levelObjectsParent == null)
         {
-            Debug.LogError("LevelSaveLoadManager did not receive a reference to LevelEditor during Init!");
-        }
-    }
-
-    public string GetSaveFilePath(int slot)
-    {
-        string fileName;
-        switch (slot)
-        {
-            case 1: fileName = saveSlot1; break;
-            case 2: fileName = saveSlot2; break;
-            case 3: fileName = saveSlot3; break;
-            default:
-                Debug.LogError($"Invalid save slot: {slot}");
-                return null;
-        }
-        return Path.Combine(Application.persistentDataPath, fileName);
-    }
-
-
-    public void SaveLevel(int slot)
-    {
-        if (levelEditor == null)
-        {
-            Debug.LogError("LevelEditor is not available. Cannot save level.");
+            Debug.LogError("Parent object for level objects is not assigned!");
             return;
         }
-
-        if (levelEditor.startAsteroidInstance == null || levelEditor.finishAsteroidInstance == null)
-        {
-            levelEditor.ShowMessage("Start and finish asteroids must be present on the level to save.", true);
-            return;
-        }
-        levelEditor.ClearMessage();
-
-        string filePath = GetSaveFilePath(slot);
-        if (string.IsNullOrEmpty(filePath)) return;
 
         LevelData levelData = new LevelData();
-        levelData.timeLimit = levelEditor.GetTimeLimit();
-        levelData.placedObjects = new List<ObjectData>();
+        levelData.timeLimit = timeLimit;
+        levelData.objects = new List<ObjectData>();
 
-        if (levelEditor.levelObjectsParent != null)
+        foreach (Transform child in levelObjectsParent.transform)
         {
-            foreach (Transform child in levelEditor.levelObjectsParent.transform)
-            {
-                PlacedObjectInfo objectInfo = child.GetComponent<PlacedObjectInfo>();
-                if (objectInfo != null)
-                {
-                    ObjectData objectData = new ObjectData
-                    {
-                        prefabName = objectInfo.originalPrefabName,
-                        position = child.position,
-                        rotation = child.rotation,
-                        isStartAsteroid = (child.gameObject == levelEditor.startAsteroidInstance),
-                        isFinishAsteroid = (child.gameObject == levelEditor.finishAsteroidInstance)
-                    };
-                    levelData.placedObjects.Add(objectData);
-                }
-                else
-                {
-                    Debug.LogWarning($"Object '{child.name}' is missing PlacedObjectInfo component. It will not be saved.");
-                }
-            }
+            levelData.objects.Add(new ObjectData(child.gameObject, startAsteroidInstance, finishAsteroidInstance));
         }
 
         try
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            FileStream fileStream = new FileStream(filePath, FileMode.Create);
-            formatter.Serialize(fileStream, levelData);
-            fileStream.Close();
-
-            Debug.Log($"Level successfully saved to slot {slot}: {filePath}");
-            if (levelEditor != null) levelEditor.ShowMessage($"Level saved to slot {slot}", false);
+            using (FileStream stream = new FileStream(filePath, FileMode.Create))
+            {
+                formatter.Serialize(stream, levelData);
+            }
+            Debug.Log($"Level saved to {filePath}");
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error saving level to slot {slot}: {e.Message}");
-            if (levelEditor != null) levelEditor.ShowMessage($"Error saving level to slot {slot}", true);
+            Debug.LogError($"Error saving level to {filePath}: {e.Message}");
         }
     }
 
-    public void LoadLevel(int slot)
+    public LevelData LoadLevelForEditor(string filePath, GameObject levelObjectsParent, LevelEditor editorInstance)
     {
-        if (levelEditor == null)
-        {
-            Debug.LogError("LevelEditor is not available. Cannot load level in editor.");
-            return;
-        }
-
-        string filePath = GetSaveFilePath(slot);
-        if (string.IsNullOrEmpty(filePath)) return;
-
         if (!File.Exists(filePath))
         {
-            levelEditor.ShowMessage($"Save file for slot {slot} not found.", true);
-            Debug.LogWarning($"Save file for slot {slot} not found: {filePath}");
-            return;
+            Debug.LogWarning($"Save file not found at {filePath}");
+            return null;
         }
 
         try
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            FileStream fileStream = new FileStream(filePath, FileMode.Open);
-            LevelData loadedData = formatter.Deserialize(fileStream) as LevelData;
-            fileStream.Close();
-
-            if (loadedData == null)
+            LevelData loadedData;
+            using (FileStream stream = new FileStream(filePath, FileMode.Open))
             {
-                levelEditor.ShowMessage($"Failed to load level data from slot {slot}.", true);
-                Debug.LogError($"Failed to deserialize level data from file: {filePath}");
-                return;
+                loadedData = (LevelData)formatter.Deserialize(stream);
             }
 
-            levelEditor.ClearLevel();
-
-            levelEditor.SetTimeLimit(loadedData.timeLimit);
-
-            if (levelEditor.levelObjectsParent == null)
+            if (levelObjectsParent == null)
             {
-                Debug.LogError("Level Objects parent object not found during loading!");
-                levelEditor.ShowMessage("Loading Error: Level Objects parent object not found.", true);
-                return;
+                Debug.LogError("Parent transform for loaded objects not specified in LoadLevelForEditor!");
+                return loadedData;
+            }
+            if (editorInstance == null)
+            {
+                Debug.LogError("LevelEditor instance not provided to LoadLevelForEditor!");
+                return loadedData;
             }
 
-            GameObject tempStart = null;
-            GameObject tempFinish = null;
-
-
-            foreach (ObjectData objectData in loadedData.placedObjects)
+            foreach (ObjectData objectData in loadedData.objects)
             {
-                GameObject prefabToInstantiate = levelEditor.GetPrefabByName(objectData.prefabName);
-
-                if (prefabToInstantiate != null)
+                GameObject prefabToLoad = editorInstance.GetPrefabByName(objectData.prefabName);
+                if (prefabToLoad != null)
                 {
-                    GameObject instantiatedObject = Instantiate(prefabToInstantiate, objectData.position, objectData.rotation, levelEditor.levelObjectsParent.transform);
+                    GameObject newObject = Instantiate(prefabToLoad, objectData.position, objectData.rotation, levelObjectsParent.transform);
 
-                    PlacedObjectInfo objectInfo = instantiatedObject.AddComponent<PlacedObjectInfo>();
+                    PlacedObjectInfo objectInfo = newObject.GetComponent<PlacedObjectInfo>();
+                    if (objectInfo == null)
+                    {
+                        objectInfo = newObject.AddComponent<PlacedObjectInfo>();
+                    }
                     objectInfo.originalPrefabName = objectData.prefabName;
-
-
-                    if (objectData.isStartAsteroid)
-                    {
-                        tempStart = instantiatedObject;
-                    }
-                    if (objectData.isFinishAsteroid)
-                    {
-                        tempFinish = instantiatedObject;
-                    }
                 }
                 else
                 {
-                    Debug.LogWarning($"Prefab with name '{objectData.prefabName}' not found when loading editor level! Object will not be created.");
+                    Debug.LogWarning($"Prefab with name '{objectData.prefabName}' not found in LevelEditor! Object will not be created.");
                 }
             }
 
-            levelEditor.startAsteroidInstance = tempStart;
-            levelEditor.finishAsteroidInstance = tempFinish;
-
-
-            Debug.Log($"Level loaded from slot {slot}");
-            if (levelEditor != null) levelEditor.ShowMessage($"Level loaded from slot {slot}", false);
+            Debug.Log($"Level loaded from {filePath} for editor.");
+            return loadedData;
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error loading level from slot {slot}: {e.Message}");
-            if (levelEditor != null) levelEditor.ShowMessage($"Error loading level to slot {slot}", true);
+            Debug.LogError($"Error loading level from {filePath} for editor: {e.Message}");
+            return null;
+        }
+    }
+
+    public bool DeleteLevel(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            try
+            {
+                File.Delete(filePath);
+                Debug.Log($"Level file deleted: {filePath}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error deleting file {filePath}: {e.Message}");
+                return false;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"File not found, cannot delete: {filePath}");
+            return false;
         }
     }
 
     public LevelData LoadLevelForGame(int slot, Transform parentTransform, List<GameObject> availablePrefabs)
     {
-        string filePath = GetSaveFilePath(slot);
-        if (string.IsNullOrEmpty(filePath))
-        {
-            Debug.LogError($"Invalid file path for slot {slot}.");
-            return null;
-        }
-
-
+        string filePath = Path.Combine(Application.persistentDataPath, $"level_slot_{slot}.dat");
         if (!File.Exists(filePath))
         {
-            Debug.LogWarning($"Save file for slot {slot} not found for game loading: {filePath}");
+            Debug.LogWarning($"Save file not found at {filePath} for slot {slot}.");
             return null;
         }
 
         try
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            FileStream fileStream = new FileStream(filePath, FileMode.Open);
-            LevelData loadedData = formatter.Deserialize(fileStream) as LevelData;
-            fileStream.Close();
-
-            if (loadedData == null)
+            LevelData loadedData;
+            using (FileStream stream = new FileStream(filePath, FileMode.Open))
             {
-                Debug.LogError($"Failed to load level data from slot {slot} for game.");
-                return null;
+                loadedData = (LevelData)formatter.Deserialize(stream);
             }
 
-            if (parentTransform != null)
+            if (parentTransform == null)
             {
-                List<GameObject> childrenToDestroy = new List<GameObject>();
-                foreach (Transform child in parentTransform)
-                {
-                    childrenToDestroy.Add(child.gameObject);
-                }
-                foreach (GameObject child in childrenToDestroy)
-                {
-                    Destroy(child);
-                }
+                Debug.LogError("Parent transform for loaded objects not specified in LoadLevelForGame!");
+            }
+            if (availablePrefabs == null || availablePrefabs.Count == 0)
+            {
+                Debug.LogError("Available prefabs list is empty in LoadLevelForGame!");
+                return loadedData;
             }
 
-            foreach (ObjectData objectData in loadedData.placedObjects)
+            foreach (ObjectData objectData in loadedData.objects)
             {
                 GameObject prefabToInstantiate = FindPrefabByName(objectData.prefabName, availablePrefabs);
-
                 if (prefabToInstantiate != null)
                 {
-                    GameObject instantiatedObject = Instantiate(prefabToInstantiate, objectData.position, objectData.rotation, parentTransform);
+                    GameObject instantiatedObject = Instantiate(prefabToInstantiate, (Vector3)objectData.position, (Quaternion)objectData.rotation, parentTransform);
 
                     if (objectData.isStartAsteroid)
                     {
@@ -339,7 +271,7 @@ public class LevelSaveLoadManager : MonoBehaviour
     {
         if (availablePrefabs == null || availablePrefabs.Count == 0)
         {
-            Debug.LogWarning("Available prefabs list is null or empty in LevelSaveLoadManager. Cannot find prefab by name.");
+            Debug.LogWarning("Available prefabs list is null or empty in LevelSaveLoadManager.Cannot find prefab by name.");
             return null;
         }
         foreach (var prefab in availablePrefabs)
