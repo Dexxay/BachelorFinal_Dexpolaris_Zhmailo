@@ -1,4 +1,3 @@
-// GameLevelLoader.cs
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -9,8 +8,12 @@ public class GameLevelLoader : MonoBehaviour
     public Transform levelObjectsParentTransform;
     public int levelSlotToLoad = 1;
 
+    private MainPlayer player;
+
     void Start()
     {
+        player = FindFirstObjectByType<MainPlayer>();
+
         if (levelSaveLoadManager == null)
         {
             Debug.LogError("LevelSaveLoadManager not assigned in GameLevelLoader!");
@@ -32,7 +35,6 @@ public class GameLevelLoader : MonoBehaviour
         if (loadedLevelData != null)
         {
             Debug.Log($"Level loaded successfully. Time limit: {loadedLevelData.timeLimit} sec.");
-
             FindStartAndFinishAsteroids(loadedLevelData);
         }
         else
@@ -68,13 +70,14 @@ public class GameLevelLoader : MonoBehaviour
 
         if (startAsteroid != null)
         {
+            player.transform.position = startAsteroid.transform.position + new Vector3(0,7,0);
+            Debug.Log("Player teleported to " + startAsteroid.transform.position);
 
         }
         else
         {
             Debug.LogWarning("Start asteroid not found in loaded level for game (looking for tag 'StartAsteroid').");
         }
-
         if (finishAsteroid != null)
         {
 
@@ -83,7 +86,6 @@ public class GameLevelLoader : MonoBehaviour
         {
             Debug.LogWarning("Finish asteroid not found in loaded level for game (looking for tag 'FinishAsteroid').");
         }
-
     }
 
     public void LoadSelectedLevel(int slot)

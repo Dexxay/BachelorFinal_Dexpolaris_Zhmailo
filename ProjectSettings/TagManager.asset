@@ -10,6 +10,8 @@ TagManager:
   - Gun
   - Collectable
   - EditorPlane
+  - StartAsteroid
+  - FinishAsteroid
   layers:
   - Default
   - TransparentFX

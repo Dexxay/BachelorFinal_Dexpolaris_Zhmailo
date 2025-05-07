@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6978056342184866539}
   - component: {fileID: 6978056342184866536}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 6978056342841712054}
   - component: {fileID: 6978056342841712052}
   - component: {fileID: 6978056342841712055}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4975,13 +4975,15 @@ GameObject:
   m_Component:
   - component: {fileID: 7228482820298877755}
   - component: {fileID: 8892147486200633948}
-  m_Layer: 9
+  - component: {fileID: 121834251}
+  - component: {fileID: 121834255}
+  m_Layer: 8
   m_Name: LaserGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7228482820298877755
 Transform:
   m_ObjectHideFlags: 0
@@ -5012,24 +5014,142 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponType: 0
-  damage: 20
+  damage: 40
   maxAmmoAmount: 320
-  timeBetweenShooting: 0.05
-  spreadX: 0.05
-  spreadY: 0.05
-  range: 100
-  reloadTime: 1.5
-  timeBetweenShots: 0.05
   magazineSize: 32
   bulletsPerTap: 1
   allowButtonHold: 1
+  timeBetweenShooting: 0.05
+  timeBetweenShots: 0.05
+  spreadX: 0.05
+  spreadY: 0.05
+  range: 300
+  reloadTime: 1.05
+  muzzleFlash: {fileID: 6978056342841712052}
+  audioSource: {fileID: 121834251}
+  shotSound: {fileID: 8300000, guid: 4925a1fa2ce8b9d4882435e16b800c6f, type: 3}
+  hitSound: {fileID: 8300000, guid: 9c5d6f4b9c70b8e4f8380c07dbc2e3db, type: 3}
+  animator: {fileID: 121834255}
   ignoreLayers:
     serializedVersion: 2
     m_Bits: 256
-  muzzleFlash: {fileID: 6978056342841712052}
-  audioSource: {fileID: 0}
-  shotSound: {fileID: 0}
-  animator: {fileID: 0}
+--- !u!82 &121834251
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8288951269078344378}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.0625
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!95 &121834255
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8288951269078344378}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b04bd66f05f88ed4fb40ac1b743b17b1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &667706402596025839
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5093,9 +5213,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 588f2ae9cb862b2478c48a9e6e9636fe, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 588f2ae9cb862b2478c48a9e6e9636fe, type: 3}
       propertyPath: m_Name
       value: Accatran_MG_Variant_Heavy_Laspistol_Red
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 588f2ae9cb862b2478c48a9e6e9636fe, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 588f2ae9cb862b2478c48a9e6e9636fe, type: 3}

@@ -257,9 +257,4 @@ public class EditorUIHandler : MonoBehaviour
                 if (levelEditor != null) levelEditor.ClearAllObjectsConfirmed();
             });
     }
-
-    public void ShowDeleteObjectConfirmation(string objectName, Action confirmAction)
-    {
-        ShowConfirmationDialog($"Are you sure you want to delete '{objectName}'?", confirmAction);
-    }
 }

@@ -8,9 +8,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 1aa21b762bfe7ec4aa10858f02e13ad1
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SpaceTest.unity
     guid: 3bf96274d3c70a44b9b6182ef2668dbb
+  - enabled: 1
+    path: Assets/Scenes/PlayCustomLevels.unity
+    guid: 5d1bf9ccbf42322458cadba591c5064d
   - enabled: 0
     path: Assets/Scenes/ChooseLevelMenu.unity
     guid: e3f38ba573190b143bd377b19cdeaba7

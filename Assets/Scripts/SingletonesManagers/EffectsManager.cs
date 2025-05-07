@@ -36,6 +36,8 @@ public class EffectsManager : MonoBehaviour
     public GameObject SpawnBulletHole(Vector3 position, Quaternion rotation)
     {
         GameObject currentBulletHole = bulletHoles[nextBulletIndex];
+        if (currentBulletHole == null)
+            currentBulletHole = Instantiate(bulletHolePrefab, transform);
         currentBulletHole.SetActive(true);
         currentBulletHole.transform.SetPositionAndRotation(position, rotation);
 
@@ -44,7 +46,7 @@ public class EffectsManager : MonoBehaviour
         {
             nextBulletIndex = 0;
         }
-
+        
         return currentBulletHole;
     }
 }

@@ -61,6 +61,7 @@
     <Compile Include="Assets\Scripts\Collectable\RotateObject.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\Enemies\SkeletonBehaviour.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\PlacedObjectInfo.cs" />
     <Compile Include="Assets\Scripts\Enemies\LaserBeamAutoDestroy.cs" />
     <Compile Include="Assets\Scripts\Player\MainPlayer.cs" />
     <Compile Include="Assets\Scripts\UI\MenuScripts\InfoMenu.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Assets\Scripts\Enemies\GhostBehaviour.cs" />
     <Compile Include="Assets\Scripts\Collectable\AmmoCollectable.cs" />
     <Compile Include="Assets\Scripts\Weapons\WeaponScript.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\GameLevelLoader.cs" />
     <Compile Include="Assets\Scripts\Enemies\LaserTurretBehaviour.cs" />
     <Compile Include="Assets\Scripts\UI\ScoreCount.cs" />
     <Compile Include="Assets\Scripts\ScriptableObjects\KeyCodesDefaults.cs" />
@@ -105,8 +107,6 @@
     <Compile Include="Assets\Scripts\UI\MenuScripts\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\Enemies\NavAgentTest.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\PlacedObjectInfo.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\GameLevelLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

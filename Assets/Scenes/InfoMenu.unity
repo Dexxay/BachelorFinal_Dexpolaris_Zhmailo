@@ -190,6 +190,12 @@ MonoBehaviour:
     which has a maximum of 100 units. On the right side, you can see your current
     weapon and the amount of ammunition you have. You can switch between weapons.
     Additionally, you can create your own levels by going to the "Level Editor" menu.
+    In the level editor menu, you can place objects by clicking the left mouse button.
+    You can remove objects using the right mouse button. You can select objects using
+    the keyboard. 0 - end asteroid, 1 - start asteroid, 2 - random meteors, 3 and
+    4 - weapons, 5 and 6 - ammunition, 7 - medkit, 8 and 9 - enemies. You can save
+    or load levels in the pause menu, which can be accessed by pressing ESC.
+
 
     Enjoy
     the game!
@@ -223,8 +229,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 44
+  m_fontSizeBase: 44
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -259,7 +265,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -80.87079, y: 0, z: -145.65326, w: -142.13464}
+  m_margin: {x: -80.87079, y: 0, z: -145.65326, w: -275.4156}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

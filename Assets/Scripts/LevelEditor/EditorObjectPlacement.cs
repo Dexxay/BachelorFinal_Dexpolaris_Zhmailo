@@ -12,6 +12,11 @@ public class EditorObjectPlacement : MonoBehaviour
 
     private int currentObjectToPlace = 2;
 
+    [Header("Sound Effects")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip setSound;
+    [SerializeField] private AudioClip deleteSound;
+
     public void Init(LevelEditor editor, Camera camera)
     {
         levelEditor = editor;
@@ -121,6 +126,8 @@ public class EditorObjectPlacement : MonoBehaviour
                             if (currentObjectToPlace == 1) levelEditor.startAsteroidInstance = newObject;
                             if (currentObjectToPlace == 0) levelEditor.finishAsteroidInstance = newObject;
 
+                            audioSource.PlayOneShot(setSound);
+
                             levelEditor.ClearMessage();
                         }
                     }
@@ -143,6 +150,7 @@ public class EditorObjectPlacement : MonoBehaviour
                             levelEditor.finishAsteroidInstance = null;
                         }
                         Destroy(objectToRemoveInfo.gameObject);
+                        audioSource.PlayOneShot(deleteSound);
                         levelEditor.ShowMessage("Object deleted.", false);
                     }
                 }

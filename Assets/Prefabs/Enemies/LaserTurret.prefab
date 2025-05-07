@@ -149,13 +149,13 @@ MonoBehaviour:
   firePoint: {fileID: 186396032212938223}
   attackRange: 100
   rotationSpeed: 45
-  laserSpeed: 100
+  laserSpeed: 150
   laserDamage: 25
   laserLinePrefab: {fileID: 8089527844294005958, guid: b7f304f390a14c34a8778829861d5190, type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  attackCooldown: 3
+  attackCooldown: 2
   score: 50
   horizontalBase: {fileID: 186569250995169529}
   turretHead: {fileID: 186570621847917373}
