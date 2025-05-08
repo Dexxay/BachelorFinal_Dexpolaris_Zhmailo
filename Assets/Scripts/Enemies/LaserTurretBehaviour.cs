@@ -17,6 +17,8 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
     [Header("Laser Settings")]
     [SerializeField] private float laserSpeed = 50f;
     [SerializeField] private int laserDamage = 25;
+    [SerializeField] private float accuracy = 2.5f;
+    [SerializeField] private float distanceTravelMultiplier = 2f;
     [SerializeField] private LineRenderer laserLinePrefab;
     [SerializeField] private LayerMask groundLayer;
 
@@ -142,9 +144,8 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
         Vector3 direction = (playerPosition - startPosition).normalized;
 
         float distanceToPlayer = Vector3.Distance(startPosition, playerPosition);
-        float distanceMultiplier = 1.5f;
 
-        Vector3 extendedTargetPosition = startPosition + direction * (distanceToPlayer * distanceMultiplier);
+        Vector3 extendedTargetPosition = startPosition + direction * (distanceToPlayer * distanceTravelMultiplier);
 
         GameObject laserGO = new GameObject("LaserBeam");
         LineRenderer lr = Instantiate(laserLinePrefab, laserGO.transform);
@@ -159,9 +160,8 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
 
     private IEnumerator MoveLaser(LineRenderer lr, Vector3 start, Vector3 target, GameObject laserGO)
     {
-        float distanceMultiplier = 1.5f;
         float elapsed = 0f;
-        float distance = distanceMultiplier * Vector3.Distance(start, target);
+        float distance = distanceTravelMultiplier * Vector3.Distance(start, target);
         float travelTime =  distance / laserSpeed;
         bool hasHit = false;
 
@@ -212,7 +212,7 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
                 break;
             }
 
-            if (!hasHit && Vector3.Distance(currentPosition, player.transform.position) < 1.5f)
+            if (!hasHit && Vector3.Distance(currentPosition, player.transform.position) < accuracy)
             {
                 HitPlayer();
                 hasHit = true;
@@ -251,15 +251,28 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
     public void Die()
     {
         canAttack = false;
+
+        if (attackRoutine != null)
+        {
+            StopCoroutine(attackRoutine);
+            attackRoutine = null;
+        }
+
         explosion.Play();
+
         foreach (var laser in activeLasers)
         {
             if (laser != null)
             {
+                foreach (Transform child in laser.transform)
+                {
+                    Destroy(child.gameObject);
+                }
                 Destroy(laser);
             }
         }
         activeLasers.Clear();
+
         player.ScoreManager.AddScore(score);
 
         EnemyDied?.Invoke(this);

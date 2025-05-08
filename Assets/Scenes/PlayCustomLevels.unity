@@ -180,7 +180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7953649203427449791, guid: fc03a8d3042dbc34b92d28878be6c618, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7953649203427449791, guid: fc03a8d3042dbc34b92d28878be6c618, type: 3}
       propertyPath: jumpHeight

@@ -67,9 +67,10 @@ public class GameLevelLoader : MonoBehaviour
 
         if (startAsteroid != null)
         {
+            player.PlayerMovement.enabled = false;
             player.transform.position = startAsteroid.transform.position + new Vector3(0,7,0);
+            player.PlayerMovement.enabled = true;
             Debug.Log("Player teleported to " + startAsteroid.transform.position);
-
         }
         else
         {

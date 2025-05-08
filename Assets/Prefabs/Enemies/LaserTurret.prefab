@@ -149,7 +149,7 @@ MonoBehaviour:
   firePoint: {fileID: 186396032212938223}
   attackRange: 100
   rotationSpeed: 45
-  laserSpeed: 150
+  laserSpeed: 200
   laserDamage: 25
   laserLinePrefab: {fileID: 8089527844294005958, guid: b7f304f390a14c34a8778829861d5190, type: 3}
   groundLayer:
@@ -10318,6 +10318,14 @@ PrefabInstance:
     - target: {fileID: 4595654756050798, guid: 7191a0df8b6695d449a0f18a361bc311, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4703932692914808, guid: 7191a0df8b6695d449a0f18a361bc311, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4703932692914808, guid: 7191a0df8b6695d449a0f18a361bc311, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.33
       objectReference: {fileID: 0}
     - target: {fileID: 23364559723917138, guid: 7191a0df8b6695d449a0f18a361bc311, type: 3}
       propertyPath: m_CastShadows
