@@ -38,8 +38,8 @@ public class EditorUIHandler : MonoBehaviour
 
         if (timeLimitSlider != null)
         {
-            timeLimitSlider.minValue = 30f;
-            timeLimitSlider.maxValue = 120f;
+            timeLimitSlider.minValue = levelEditor.minSliderTimeLimit;
+            timeLimitSlider.maxValue = levelEditor.maxSliderTimeLimit;
             timeLimitSlider.onValueChanged.AddListener(SetTimeLimitFromSlider);
         }
         else

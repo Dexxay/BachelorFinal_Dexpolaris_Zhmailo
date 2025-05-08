@@ -23,6 +23,10 @@ public class LevelEditor : MonoBehaviour
     public float randomHeightRange = 0.5f;
     public Collider editorPlaneCollider;
 
+    [Header("Time Limit Settings")]
+    public float minSliderTimeLimit = 60f;
+    public float maxSliderTimeLimit = 180f;
+
     [HideInInspector] public GameObject startAsteroidInstance = null;
     [HideInInspector] public GameObject finishAsteroidInstance = null;
 
@@ -89,7 +93,7 @@ public class LevelEditor : MonoBehaviour
 
     public void SetTimeLimit(float newTimeLimit)
     {
-        currentLevelTimeLimit = Mathf.Clamp(newTimeLimit, 30f, 120f);
+        currentLevelTimeLimit = Mathf.Clamp(newTimeLimit, minSliderTimeLimit, maxSliderTimeLimit);
         if (uiHandler != null)
         {
             uiHandler.UpdateTimeLimitText(currentLevelTimeLimit);
