@@ -137,7 +137,14 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
         audioSource.PlayOneShot(shotSound);
 
         Vector3 startPosition = firePoint.position;
-        Vector3 targetPosition = player.transform.position;
+        Vector3 playerPosition = player.transform.position;
+
+        Vector3 direction = (playerPosition - startPosition).normalized;
+
+        float distanceToPlayer = Vector3.Distance(startPosition, playerPosition);
+        float distanceMultiplier = 1.5f;
+
+        Vector3 extendedTargetPosition = startPosition + direction * (distanceToPlayer * distanceMultiplier);
 
         GameObject laserGO = new GameObject("LaserBeam");
         LineRenderer lr = Instantiate(laserLinePrefab, laserGO.transform);
@@ -146,14 +153,16 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
         lr.SetPosition(1, startPosition);
 
         activeLasers.Add(laserGO);
-        StartCoroutine(MoveLaser(lr, startPosition, targetPosition, laserGO));
+        StartCoroutine(MoveLaser(lr, startPosition, extendedTargetPosition, laserGO));
     }
+
 
     private IEnumerator MoveLaser(LineRenderer lr, Vector3 start, Vector3 target, GameObject laserGO)
     {
+        float distanceMultiplier = 1.5f;
         float elapsed = 0f;
-        float distance = Vector3.Distance(start, target);
-        float travelTime = distance / laserSpeed;
+        float distance = distanceMultiplier * Vector3.Distance(start, target);
+        float travelTime =  distance / laserSpeed;
         bool hasHit = false;
 
         Color startColor = lr.startColor;

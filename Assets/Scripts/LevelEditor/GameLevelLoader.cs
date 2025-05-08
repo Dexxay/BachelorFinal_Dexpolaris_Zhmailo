@@ -29,7 +29,6 @@ public class GameLevelLoader : MonoBehaviour
             return;
         }
 
-
         LevelData loadedLevelData = levelSaveLoadManager.LoadLevelForGame(levelSlotToLoad, levelObjectsParentTransform, availablePrefabs);
 
         if (loadedLevelData != null)
@@ -54,7 +53,6 @@ public class GameLevelLoader : MonoBehaviour
         GameObject startAsteroid = null;
         GameObject finishAsteroid = null;
 
-
         foreach (Transform child in levelObjectsParentTransform)
         {
             if (child.CompareTag("StartAsteroid"))
@@ -66,7 +64,6 @@ public class GameLevelLoader : MonoBehaviour
                 finishAsteroid = child.gameObject;
             }
         }
-
 
         if (startAsteroid != null)
         {
