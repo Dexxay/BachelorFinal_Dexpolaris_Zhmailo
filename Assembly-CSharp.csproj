@@ -62,7 +62,6 @@
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\Enemies\SkeletonBehaviour.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\PlacedObjectInfo.cs" />
-    <Compile Include="Assets\Scripts\Enemies\LaserBeamAutoDestroy.cs" />
     <Compile Include="Assets\Scripts\Player\MainPlayer.cs" />
     <Compile Include="Assets\Scripts\UI\MenuScripts\InfoMenu.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\EditorCameraMovement.cs" />
