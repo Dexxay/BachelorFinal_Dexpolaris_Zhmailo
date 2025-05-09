@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8789185590305360887}
   - component: {fileID: 5272264318315161673}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 8349305854540981350}
   - component: {fileID: 8959702634369885243}
   - component: {fileID: 3683320205538866889}
+  - component: {fileID: -4257479626243284118}
   m_Layer: 0
   m_Name: LaserTurret
   m_TagString: Untagged
@@ -146,28 +147,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 250
+  laserWeapon: {fileID: -4257479626243284118}
   firePoint: {fileID: 186396032212938223}
   attackRange: 100
   rotationSpeed: 45
-  laserSpeed: 200
-  laserDamage: 25
-  accuracy: 2.5
-  distanceTravelMultiplier: 2
-  laserLinePrefab: {fileID: 8089527844294005958, guid: b7f304f390a14c34a8778829861d5190, type: 3}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
   attackCooldown: 2
   score: 50
   horizontalBase: {fileID: 186569250995169529}
   turretHead: {fileID: 186570621847917373}
   minVerticalAngle: -90
   maxVerticalAngle: 45
-  muzzleFlash: {fileID: 168844037056291368}
   explosion: {fileID: 6502090649185419722}
   destroyTime: 0.1
-  audioSource: {fileID: 8349305854540981350}
-  shotSound: {fileID: 8300000, guid: e8daaf424d3b92e4e9de9b362b42db1a, type: 3}
 --- !u!135 &7022209083305463894
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -304,6 +295,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 3
+--- !u!114 &-4257479626243284118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181973605632903403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a95dc0259e0aec41a22172558937c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserSpeed: 150
+  laserDamage: 25
+  accuracy: 2.5
+  distanceTravelMultiplier: 2
+  laserLinePrefab: {fileID: 8089527844294005958, guid: b7f304f390a14c34a8778829861d5190, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  muzzleFlash: {fileID: 168844037056291368}
+  audioSource: {fileID: 8349305854540981350}
+  shotSound: {fileID: 8300000, guid: e8daaf424d3b92e4e9de9b362b42db1a, type: 3}
 --- !u!1 &1119915514806784123
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +329,7 @@ GameObject:
   - component: {fileID: 7611413614595219129}
   - component: {fileID: 6502090649185419722}
   - component: {fileID: 1348027814572301342}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: DemolitionEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5186,7 +5200,7 @@ GameObject:
   - component: {fileID: 5870126280779145177}
   - component: {fileID: 168844037056291368}
   - component: {fileID: 3870958698322739540}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10154,7 +10168,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2816835558046313043}
   - component: {fileID: 8191460829752779918}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

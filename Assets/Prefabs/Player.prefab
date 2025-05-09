@@ -5259,7 +5259,7 @@ MonoBehaviour:
   moveSpeed: 15
   sprintMultiplier: 1.5
   gravityForce: -20
-  jumpHeight: 5
+  jumpHeight: 4
   groundDistance: 2
   groundCheck: {fileID: 7953649201879648394}
   groundMask:

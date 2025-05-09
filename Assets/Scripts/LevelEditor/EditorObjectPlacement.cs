@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
 
 public class EditorObjectPlacement : MonoBehaviour
 {
@@ -24,13 +25,11 @@ public class EditorObjectPlacement : MonoBehaviour
 
         if (levelEditor == null)
         {
-            Debug.LogError("EditorObjectPlacement did not receive a reference to LevelEditor!");
             enabled = false;
             return;
         }
         if (editorCamera == null)
         {
-            Debug.LogError("EditorObjectPlacement did not receive a reference to Camera!");
             enabled = false;
             return;
         }
@@ -38,6 +37,12 @@ public class EditorObjectPlacement : MonoBehaviour
         gridSpacing = levelEditor.gridSpacing;
         randomHeightRange = levelEditor.randomHeightRange;
         editorPlaneCollider = levelEditor.editorPlaneCollider;
+
+        if (levelEditor.uiHandler != null)
+        {
+            string displayString = GetElementDisplayName(currentObjectToPlace);
+            levelEditor.uiHandler.UpdateSelectedElementDisplay(displayString);
+        }
     }
 
     public void HandleInput()
@@ -48,6 +53,8 @@ public class EditorObjectPlacement : MonoBehaviour
 
     private void HandleObjectSelection()
     {
+        int previousObjectToPlace = currentObjectToPlace;
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) currentObjectToPlace = 1;
         else if (Input.GetKeyDown(KeyCode.Alpha2)) currentObjectToPlace = 2;
         else if (Input.GetKeyDown(KeyCode.Alpha3)) currentObjectToPlace = 3;
@@ -58,7 +65,46 @@ public class EditorObjectPlacement : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha8)) currentObjectToPlace = 8;
         else if (Input.GetKeyDown(KeyCode.Alpha9)) currentObjectToPlace = 9;
         else if (Input.GetKeyDown(KeyCode.Alpha0)) currentObjectToPlace = 0;
+
+        if (currentObjectToPlace != previousObjectToPlace)
+        {
+            if (levelEditor.uiHandler != null)
+            {
+                string displayString = GetElementDisplayName(currentObjectToPlace);
+                levelEditor.uiHandler.UpdateSelectedElementDisplay(displayString);
+            }
+        }
     }
+
+    private string GetElementDisplayName(int objectType)
+    {
+        switch (objectType)
+        {
+            case 1:
+                return "Start Point";
+            case 2:
+                return "Random Asteroid";
+            case 3:
+                return "Plasma Gun";
+            case 4:
+                return "Laser Gun";
+            case 5:
+                return "Laser Ammo";
+            case 6:
+                return "Plasma Ammo";
+            case 7:
+                return "Health Pack";
+            case 8:
+                return "Enemy Turret";
+            case 9:
+                return "Enemy UFO Spawner";
+            case 0:
+                return "Finish Point";
+            default:
+                return "Unknown Element (" + objectType + ")";
+        }
+    }
+
 
     private void HandleObjectPlacementAndDeletion()
     {

@@ -17,43 +17,120 @@ public class GameLevelLoader : MonoBehaviour
 
     void Start()
     {
-        player = FindFirstObjectByType<MainPlayer>();
+        PerformLoad();
+    }
 
+    private void PerformLoad()
+    {
+        InitializePlayer();
+        if (!ValidateDependencies())
+        {
+            Debug.LogError("GameLevelLoader dependencies are not met. Loading aborted.");
+            return;
+        }
+
+        ClearExistingGameObjects();
+
+        LevelData loadedLevelData = LoadLevelData();
+
+        if (loadedLevelData != null)
+        {
+            HandleSuccessfulLoad(loadedLevelData);
+        }
+        else
+        {
+            HandleFailedLoad();
+        }
+    }
+
+    private void InitializePlayer()
+    {
+        player = FindFirstObjectByType<MainPlayer>();
+        if (player == null)
+        {
+            Debug.LogError("MainPlayer object not found in the scene!");
+        }
+    }
+
+    private bool ValidateDependencies()
+    {
+        bool isValid = true;
         if (levelSaveLoadManager == null)
         {
             Debug.LogError("LevelSaveLoadManager not assigned in GameLevelLoader!");
-            return;
-        }
-        if (levelObjectsParentTransform == null)
-        {
-            Debug.LogError("LevelObjectsParentTransform not assigned in GameLevelLoader! Level objects will be created at the scene root.");
+            isValid = false;
         }
         if (availablePrefabs == null || availablePrefabs.Count == 0)
         {
             Debug.LogError("Available prefabs list is empty or not assigned in GameLevelLoader! Level objects loading will not be possible.");
-            return;
+            isValid = false;
         }
-
-        LevelData loadedLevelData = levelSaveLoadManager.LoadLevelForGame(levelSlotToLoad, levelObjectsParentTransform, availablePrefabs);
-
-        if (loadedLevelData != null)
+        if (levelObjectsParentTransform == null)
         {
-            timeLimit = loadedLevelData.timeLimit;
-            Debug.Log($"Level loaded successfully. Time limit: {timeLimit} sec.");
-            FindStartAndFinishAsteroids(loadedLevelData);
-            StartCoroutine(PlayRocketEffectBeforeEnd());
+            Debug.LogWarning("LevelObjectsParentTransform not assigned in GameLevelLoader! Level objects will be created at the scene root.");
+        }
+        return isValid;
+    }
+
+    private LevelData LoadLevelData()
+    {
+        return levelSaveLoadManager.LoadLevelForGame(levelSlotToLoad, levelObjectsParentTransform, availablePrefabs);
+    }
+
+    private void HandleSuccessfulLoad(LevelData loadedLevelData)
+    {
+        timeLimit = loadedLevelData.timeLimit;
+        Debug.Log($"Level loaded successfully. Time limit: {timeLimit} sec.");
+
+        if (player != null)
+        {
+            FindAndSetupAsteroids();
         }
         else
         {
-            Debug.LogError("Failed to load level for game.");
+            Debug.LogWarning("MainPlayer object is missing. Cannot find start/finish asteroids or position player.");
+        }
+
+        SetupBlackHole(loadedLevelData);
+
+        StartCoroutine(PlayRocketEffectBeforeEnd());
+    }
+
+    private void HandleFailedLoad()
+    {
+        Debug.LogError($"Failed to load level from slot {levelSlotToLoad} for game.");
+    }
+
+    private void ClearExistingGameObjects()
+    {
+        if (levelObjectsParentTransform != null)
+        {
+            List<GameObject> childrenToDestroy = new List<GameObject>();
+            foreach (Transform child in levelObjectsParentTransform)
+            {
+                childrenToDestroy.Add(child.gameObject);
+            }
+            foreach (GameObject child in childrenToDestroy)
+            {
+                Destroy(child);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("LevelObjectsParentTransform is null, cannot clear existing objects before loading.");
         }
     }
 
-    void FindStartAndFinishAsteroids(LevelData loadedLevelData)
+    private void FindAndSetupAsteroids()
     {
         if (levelObjectsParentTransform == null)
         {
             Debug.LogWarning("levelObjectsParentTransform not assigned. Cannot find start/finish asteroids by parent object.");
+            return;
+        }
+        if (player == null)
+        {
+            Debug.LogWarning("Player object is null. Cannot position player or set up camera look.");
             return;
         }
 
@@ -72,19 +149,35 @@ public class GameLevelLoader : MonoBehaviour
             }
         }
 
+        PositionPlayerAtStart(startAsteroid);
+        SetupFinishAsteroidEffectsAndCamera(finishAsteroid);
+    }
+
+    private void PositionPlayerAtStart(GameObject startAsteroid)
+    {
+        if (player == null) return;
+
         if (startAsteroid != null)
         {
-            player.CharacterController.enabled = false;
-            player.PlayerMovement.enabled = false;
+            if (player.CharacterController != null) player.CharacterController.enabled = false;
+            if (player.PlayerMovement != null) player.PlayerMovement.enabled = false;
+
             player.transform.position = startAsteroid.transform.position + new Vector3(0, 4, 0);
-            player.CharacterController.enabled = true;
-            player.PlayerMovement.enabled = true;
-            Debug.Log("Player teleported to " + startAsteroid.transform.position);
+
+            if (player.CharacterController != null) player.CharacterController.enabled = true;
+            if (player.PlayerMovement != null) player.PlayerMovement.enabled = true;
+
+            Debug.Log("Player teleported to start position.");
         }
         else
         {
-            Debug.LogWarning("Start asteroid not found in loaded level for game (looking for tag 'StartAsteroid').");
+            Debug.LogWarning("Start asteroid not found in loaded level. Cannot position player.");
         }
+    }
+
+    private void SetupFinishAsteroidEffectsAndCamera(GameObject finishAsteroid)
+    {
+        if (player == null) return;
 
         if (finishAsteroid != null)
         {
@@ -95,31 +188,51 @@ public class GameLevelLoader : MonoBehaviour
                 if (rocketEffect != null)
                 {
                     rocketEffect.Play();
-                    Debug.Log("Rocket effect played at start.");
+                    Debug.Log("Rocket effect played at finish asteroid.");
                 }
                 else
                 {
-                    Debug.LogWarning("BeaconEffect doesn't have ParticleSystem.");
+                    Debug.LogWarning("BeaconEffect child object doesn't have a ParticleSystem component.");
                 }
             }
             else
             {
-                Debug.LogWarning("No BeaconEffect object found");
+                Debug.LogWarning("No 'BeaconEffect' child object found under the finish asteroid.");
+            }
+
+            if (Camera.main != null && player.MouseMovement != null)
+            {
+                player.MouseMovement.enabled = false;
+                Vector3 direction = finishAsteroid.transform.position - Camera.main.transform.position;
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                player.MouseMovement.enabled = true;
+                player.MouseMovement.ForceLookRotation(lookRotation, Quaternion.Euler(0f, lookRotation.eulerAngles.y, 0f));
+                Debug.Log("Camera forced to look at finish asteroid.");
+            }
+            else
+            {
+                if (Camera.main == null) Debug.LogWarning("Main Camera not found. Cannot force camera look.");
+                if (player.MouseMovement == null) Debug.LogWarning("Player MouseMovement component not found. Cannot force camera look.");
             }
         }
         else
         {
-            Debug.LogWarning("Finish asteroid not found in loaded level for game (looking for tag 'FinishAsteroid').");
+            Debug.LogWarning("Finish asteroid not found in loaded level. Cannot set up finish effects or camera look.");
         }
+    }
 
-        if (Camera.main != null && finishAsteroid != null)
+    private void SetupBlackHole(LevelData loadedLevelData)
+    {
+        BlackHoleMover blackHoleMover = FindFirstObjectByType<BlackHoleMover>();
+
+        if (blackHoleMover != null)
         {
-            player.MouseMovement.enabled = false;
-            Vector3 direction = finishAsteroid.transform.position - Camera.main.transform.position;
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            player.MouseMovement.enabled = true;
-            player.MouseMovement.ForceLookRotation(lookRotation, Quaternion.Euler(0f, lookRotation.eulerAngles.y, 0f));
-
+            blackHoleMover.moveDurationInSeconds = loadedLevelData.timeLimit;
+            Debug.Log($"Black Hole move duration set to level time limit: {loadedLevelData.timeLimit} seconds.");
+        }
+        else
+        {
+            Debug.LogWarning("BlackHoleMover script not found in the scene. Cannot configure Black Hole.");
         }
     }
 
@@ -139,20 +252,6 @@ public class GameLevelLoader : MonoBehaviour
     public void LoadSelectedLevel(int slot)
     {
         levelSlotToLoad = slot;
-        if (levelObjectsParentTransform != null)
-        {
-            List<GameObject> childrenToDestroy = new List<GameObject>();
-            foreach (Transform child in levelObjectsParentTransform)
-            {
-                childrenToDestroy.Add(child.gameObject);
-            }
-            foreach (GameObject child in childrenToDestroy)
-            {
-                Destroy(child);
-            }
-        }
-        Start();
+        PerformLoad();
     }
 }
-
-

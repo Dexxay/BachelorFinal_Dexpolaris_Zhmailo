@@ -106,6 +106,7 @@
     <Compile Include="Assets\Scripts\UI\MenuScripts\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\Enemies\NavAgentTest.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
+    <Compile Include="Assets\Scripts\Enemies\LaserWeapon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

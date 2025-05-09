@@ -19,6 +19,9 @@ public class EditorUIHandler : MonoBehaviour
     public Button yesButton;
     public Button noButton;
 
+    [Header("Editor UI Elements")]
+    public TextMeshProUGUI selectedElementText;
+
     private LevelEditor levelEditor;
     private Coroutine clearMessageCoroutine;
     private Action onConfirmAction;
@@ -89,6 +92,19 @@ public class EditorUIHandler : MonoBehaviour
             UpdateTimeLimitText(levelEditor.GetTimeLimit());
             if (timeLimitSlider != null) timeLimitSlider.value = levelEditor.GetTimeLimit();
         }
+
+        if (selectedElementText == null)
+        {
+            Debug.LogError("selectedElementText not assigned in EditorUIHandler!");
+        }
+    }
+
+    public void UpdateSelectedElementDisplay(string elementName)
+    {
+        if (selectedElementText != null)
+        {
+            selectedElementText.text = elementName;
+        }
     }
 
     private void SetTimeLimitFromSlider(float value)
@@ -154,7 +170,6 @@ public class EditorUIHandler : MonoBehaviour
             }
             clearMessageCoroutine = StartCoroutine(ClearErrorAfterDelay(3f));
         }
-        Debug.Log(message);
     }
 
     public void ClearMessage()

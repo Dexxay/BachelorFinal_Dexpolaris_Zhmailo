@@ -7,20 +7,15 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
 {
     [Header("Health Settings")]
     [SerializeField] private int maxHealth = 200;
-    [SerializeField] private Transform firePoint;
     private int currentHealth;
+
+    [Header("Weapon")]
+    [SerializeField] private LaserWeapon laserWeapon;
+    [SerializeField] private Transform firePoint;
 
     [Header("Detection")]
     [SerializeField] private float attackRange = 100f;
     [SerializeField] private float rotationSpeed = 5f;
-
-    [Header("Laser Settings")]
-    [SerializeField] private float laserSpeed = 50f;
-    [SerializeField] private int laserDamage = 25;
-    [SerializeField] private float accuracy = 2.5f;
-    [SerializeField] private float distanceTravelMultiplier = 2f;
-    [SerializeField] private LineRenderer laserLinePrefab;
-    [SerializeField] private LayerMask groundLayer;
 
     [Header("Timing")]
     [SerializeField] private float attackCooldown = 3f;
@@ -37,29 +32,39 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
     [SerializeField] private float maxVerticalAngle = 45f;
 
     [Header("Effects")]
-    [SerializeField] private ParticleSystem muzzleFlash;
     [SerializeField] private ParticleSystem explosion;
     [SerializeField] private float destroyTime = 0.1f;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip shotSound;
 
     private MainPlayer player;
     private bool canAttack = true;
     private Coroutine attackRoutine;
-
-    private List<GameObject> activeLasers = new();
 
     public event Action<IEnemy> EnemyDied;
 
     private void Start()
     {
         player = FindFirstObjectByType<MainPlayer>();
+
+        if (laserWeapon == null)
+        {
+            laserWeapon = GetComponent<LaserWeapon>();
+            if (laserWeapon == null)
+            {
+                Debug.LogError("LaserWeapon component not found on " + gameObject.name + "! Turret will not be able to shoot.");
+            }
+        }
+        if (firePoint == null)
+        {
+            Debug.LogError("FirePoint is not assigned on " + gameObject.name + "! Turret will not be able to shoot.");
+        }
+
+
         currentHealth = maxHealth;
     }
 
     private void Update()
     {
-        if (player == null) return;
+        if (player == null || laserWeapon == null || firePoint == null) return;
 
         float distance = Vector3.Distance(transform.position, player.transform.position);
 
@@ -79,7 +84,14 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
 
     private void Patrol()
     {
-        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        if (horizontalBase != null)
+        {
+            horizontalBase.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        }
     }
 
     private void RotateTowardsPlayer()
@@ -111,129 +123,36 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
             angleX = Mathf.Clamp(angleX, minVerticalAngle, maxVerticalAngle);
 
             Vector3 currentEuler = turretHead.localEulerAngles;
-            currentEuler.x = Mathf.LerpAngle(currentEuler.x, angleX, Time.deltaTime * rotationSpeed);
+            float currentAngleX = currentEuler.x;
+            if (currentAngleX > 180f) currentAngleX -= 360f;
+
+            currentEuler.x = Mathf.LerpAngle(currentAngleX, angleX, Time.deltaTime * rotationSpeed);
+            if (currentEuler.x < 0) currentEuler.x += 360;
+
             turretHead.localEulerAngles = currentEuler;
         }
     }
 
 
-
     public IEnumerator AttackCoroutine()
     {
         canAttack = false;
-        ShootLaser();
+
+        if (laserWeapon != null && firePoint != null && player != null)
+        {
+            laserWeapon.FireLaser(firePoint.position, player.transform.position, player);
+        }
+
+
         yield return new WaitForSeconds(attackCooldown);
+
         canAttack = true;
         attackRoutine = null;
     }
 
-    private void ShootLaser()
-    {
-        if (firePoint == null)
-        {
-            Debug.LogWarning("FirePoint is not assigned!");
-            return;
-        }
-
-        muzzleFlash.Play();
-        audioSource.PlayOneShot(shotSound);
-
-        Vector3 startPosition = firePoint.position;
-        Vector3 playerPosition = player.transform.position;
-
-        Vector3 direction = (playerPosition - startPosition).normalized;
-
-        float distanceToPlayer = Vector3.Distance(startPosition, playerPosition);
-
-        Vector3 extendedTargetPosition = startPosition + direction * (distanceToPlayer * distanceTravelMultiplier);
-
-        GameObject laserGO = new GameObject("LaserBeam");
-        LineRenderer lr = Instantiate(laserLinePrefab, laserGO.transform);
-        lr.positionCount = 2;
-        lr.SetPosition(0, startPosition);
-        lr.SetPosition(1, startPosition);
-
-        activeLasers.Add(laserGO);
-        StartCoroutine(MoveLaser(lr, startPosition, extendedTargetPosition, laserGO));
-    }
-
-
-    private IEnumerator MoveLaser(LineRenderer lr, Vector3 start, Vector3 target, GameObject laserGO)
-    {
-        float elapsed = 0f;
-        float distance = distanceTravelMultiplier * Vector3.Distance(start, target);
-        float travelTime =  distance / laserSpeed;
-        bool hasHit = false;
-
-        Color startColor = lr.startColor;
-        startColor.a = 1f;
-        lr.startColor = startColor;
-        lr.endColor = startColor;
-
-        lr.startWidth = 1f;
-        lr.endWidth = 5f;
-
-        while (elapsed < travelTime)
-        {
-            if (lr == null)
-            {
-                yield break;
-            }
-
-            elapsed += Time.deltaTime;
-            Vector3 currentPosition = Vector3.Lerp(start, target, elapsed / travelTime);
-            lr.SetPosition(1, currentPosition);
-
-            float alpha = Mathf.Lerp(1f, 0f, elapsed / travelTime);
-            Color currentColor = lr.startColor;
-            currentColor.a = alpha;
-            lr.startColor = currentColor;
-            lr.endColor = currentColor;
-
-            float width = Mathf.Lerp(0.2f, 0f, elapsed / travelTime);
-            lr.startWidth = width;
-            lr.endWidth = width;
-
-            Vector3 rayDir = currentPosition - start;
-            float rayDist = rayDir.magnitude;
-            rayDir.Normalize();
-
-            if (Physics.Raycast(start, rayDir, out RaycastHit hit, rayDist, groundLayer))
-            {
-                lr.SetPosition(1, hit.point);
-                if (lr != null) Destroy(lr);
-
-                Vector3 position = hit.point + hit.normal * 0.005f;
-                Quaternion rotation = Quaternion.LookRotation(hit.normal);
-
-                GameObject bulletHole = EffectsManager.Instance.SpawnBulletHole(position, rotation);
-                bulletHole.transform.SetParent(hit.transform, true);
-
-                break;
-            }
-
-            if (!hasHit && Vector3.Distance(currentPosition, player.transform.position) < accuracy)
-            {
-                HitPlayer();
-                hasHit = true;
-                if (lr != null) Destroy(lr);
-                break;
-            }
-
-            yield return null;
-        }
-
-        if (laserGO != null)
-        {
-            activeLasers.Remove(laserGO);
-            Destroy(laserGO);
-        }
-    }
-
-
     public void HitPlayer()
     {
-        player.PlayerHealthManager.ReduceHealth(laserDamage);
+        Debug.Log("LaserTurretBehaviour: HitPlayer called (damage applied by LaserWeapon)");
     }
 
     public void TakeDamage(int damageAmount)
@@ -241,6 +160,7 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
         if (currentHealth <= 0 || damageAmount <= 0) return;
 
         currentHealth -= damageAmount;
+        Debug.Log(gameObject.name + " took " + damageAmount + " damage. Current Health: " + currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -250,33 +170,42 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
 
     public void Die()
     {
-        canAttack = false;
-
-        if (attackRoutine != null)
+        if (currentHealth <= 0)
         {
-            StopCoroutine(attackRoutine);
-            attackRoutine = null;
-        }
+            canAttack = false;
 
-        explosion.Play();
-
-        foreach (var laser in activeLasers)
-        {
-            if (laser != null)
+            if (attackRoutine != null)
             {
-                foreach (Transform child in laser.transform)
-                {
-                    Destroy(child.gameObject);
-                }
-                Destroy(laser);
+                StopCoroutine(attackRoutine);
+                attackRoutine = null;
             }
+
+            if (explosion != null)
+            {
+                explosion.Play();
+            }
+
+
+            if (laserWeapon != null)
+            {
+                laserWeapon.DestroyAllLasers();
+            }
+
+
+            if (player != null && player.ScoreManager != null)
+            {
+                player.ScoreManager.AddScore(score);
+            }
+            else
+            {
+                Debug.LogWarning("Cannot add score: player or ScoreManager is null.");
+            }
+
+
+            EnemyDied?.Invoke(this);
+
+            Invoke("DeleteObject", destroyTime);
         }
-        activeLasers.Clear();
-
-        player.ScoreManager.AddScore(score);
-
-        EnemyDied?.Invoke(this);
-        Invoke("DeleteObject", destroyTime);
     }
 
     void DeleteObject()

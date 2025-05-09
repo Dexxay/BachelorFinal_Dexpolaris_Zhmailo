@@ -32,7 +32,7 @@ public class LevelEditor : MonoBehaviour
 
     private EditorCameraMovement cameraMovement;
     private EditorObjectPlacement objectPlacement;
-    private EditorUIHandler uiHandler;
+    public EditorUIHandler uiHandler;
     private LevelSaveLoadManager saveLoadManager;
 
     private string saveSlot1 = "level_slot_1.dat";
@@ -60,7 +60,6 @@ public class LevelEditor : MonoBehaviour
         if (levelObjectsParent == null)
         {
             levelObjectsParent = new GameObject("LevelObjectsParent");
-            Debug.LogWarning("levelObjectsParent was not assigned, a new one has been created.");
         }
     }
 
@@ -98,7 +97,6 @@ public class LevelEditor : MonoBehaviour
         {
             uiHandler.UpdateTimeLimitText(currentLevelTimeLimit);
         }
-        Debug.Log("Level time limit set to: " + currentLevelTimeLimit);
     }
 
     public void ShowMessage(string message, bool isError)
@@ -247,7 +245,6 @@ public class LevelEditor : MonoBehaviour
             case 9: return ufoSpawnerPrefab;
             case 0: return finishAsteroidPrefab;
             default:
-                Debug.LogWarning($"Unknown object type requested: {objectType}");
                 return null;
         }
     }
@@ -271,7 +268,6 @@ public class LevelEditor : MonoBehaviour
         if (turretPrefab != null && turretPrefab.name == prefabName) return turretPrefab;
         if (ufoSpawnerPrefab != null && ufoSpawnerPrefab.name == prefabName) return ufoSpawnerPrefab;
 
-        Debug.LogWarning($"Prefab with name '{prefabName}' not found in LevelEditor's prefab list.");
         return null;
     }
 
@@ -283,7 +279,6 @@ public class LevelEditor : MonoBehaviour
             case 2: return Path.Combine(Application.persistentDataPath, saveSlot2);
             case 3: return Path.Combine(Application.persistentDataPath, saveSlot3);
             default:
-                Debug.LogError($"Invalid save slot: {slot}");
                 return null;
         }
     }

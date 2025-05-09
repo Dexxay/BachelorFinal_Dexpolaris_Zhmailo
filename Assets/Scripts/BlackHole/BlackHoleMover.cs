@@ -4,7 +4,7 @@ public class BlackHoleMover : MonoBehaviour
 {
     [Header("Налаштування руху")]
     [SerializeField] private float targetYPosition;
-    [SerializeField] private float moveDurationInSeconds = 60f;
+    [SerializeField] public float moveDurationInSeconds = 60f;
 
     private Vector3 startPosition;
     private Vector3 endPosition;
