@@ -79,7 +79,7 @@
     <Compile Include="Assets\Scripts\LevelEditor\LevelEditor.cs" />
     <Compile Include="Assets\Scripts\Visuals\VerticalPendulumMover.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\EditorUIHandler.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\LevelProgressManager.cs" />
+    <Compile Include="Assets\Scripts\SingletonesManagers\LevelProgressManager.cs" />
     <Compile Include="Assets\Scripts\Enemies\GhostBehaviour.cs" />
     <Compile Include="Assets\Scripts\Collectable\AmmoCollectable.cs" />
     <Compile Include="Assets\Scripts\Weapons\WeaponScript.cs" />

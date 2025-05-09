@@ -2,12 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System.Collections.Generic;
+using TMPro;
 
 public class LevelSelectManager : MonoBehaviour
 {
-    [SerializeField] private Button campaignLevel1Button;
-    [SerializeField] private Button campaignLevel2Button;
-    [SerializeField] private Button campaignLevel3Button;
+    [SerializeField] private List<Button> campaignLevelButtons;
+    [SerializeField] private LevelProgressManager levelProgressManager;
 
     [SerializeField] private Button customLevelSlot1Button;
     [SerializeField] private Button customLevelSlot2Button;
@@ -16,64 +17,55 @@ public class LevelSelectManager : MonoBehaviour
     [SerializeField] private string gameSceneName = "GameScene";
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
-    private const string CampaignLevel1Name = "campaign_1";
-    private const string CampaignLevel2Name = "campaign_2";
-    private const string CampaignLevel3Name = "campaign_3";
-
     private const string CustomLevelSlot1Name = "level_slot_1.dat";
     private const string CustomLevelSlot2Name = "level_slot_2.dat";
     private const string CustomLevelSlot3Name = "level_slot_3.dat";
 
-    private const string MaxLevelReachedKey = "MaxLevelReached";
-
     void Start()
     {
+        if (levelProgressManager == null)
+        {
+            Debug.LogError("LevelProgressManager is not assigned in LevelSelectManager!");
+            return;
+        }
+
         SetupCampaignButtons();
         SetupCustomLevelButtons();
     }
 
     void SetupCampaignButtons()
     {
-        int maxLevelReached = PlayerPrefs.GetInt(MaxLevelReachedKey, 0);
+        List<string> campaignLevels = levelProgressManager.GetCampaignLevels();
 
-        if (campaignLevel1Button == null)
+        if (campaignLevelButtons.Count != campaignLevels.Count)
         {
-            Debug.LogError("campaignLevel1Button is not assigned in the Inspector.");
-            return;
+            Debug.LogError("Mismatch between the number of campaign level buttons assigned in Inspector and the number of levels in LevelProgressManager!");
         }
-        campaignLevel1Button.onClick.AddListener(() => LoadCampaignLevel(CampaignLevel1Name));
 
-        if (campaignLevel2Button == null)
+        int maxButtons = Mathf.Min(campaignLevelButtons.Count, campaignLevels.Count);
+
+        for (int i = 0; i < maxButtons; i++)
         {
-            Debug.LogError("campaignLevel2Button is not assigned in the Inspector.");
-        }
-        else
-        {
-            if (maxLevelReached >= 1)
+            string levelName = campaignLevels[i];
+            Button levelButton = campaignLevelButtons[i];
+
+            if (levelButton == null)
             {
-                campaignLevel2Button.interactable = true;
-                campaignLevel2Button.onClick.AddListener(() => LoadCampaignLevel(CampaignLevel2Name));
+                Debug.LogError($"Campaign level button at index {i} is not assigned in the Inspector!");
+                continue;
+            }
+
+            levelButton.onClick.RemoveAllListeners();
+            string currentLevelName = levelName;
+            levelButton.onClick.AddListener(() => LoadCampaignLevel(currentLevelName));
+
+            if (levelProgressManager.IsLevelUnlocked(levelName))
+            {
+                levelButton.interactable = true;
             }
             else
             {
-                campaignLevel2Button.interactable = false;
-            }
-        }
-
-        if (campaignLevel3Button == null)
-        {
-            Debug.LogError("campaignLevel3Button is not assigned in the Inspector.");
-        }
-        else
-        {
-            if (maxLevelReached >= 2)
-            {
-                campaignLevel3Button.interactable = true;
-                campaignLevel3Button.onClick.AddListener(() => LoadCampaignLevel(CampaignLevel3Name));
-            }
-            else
-            {
-                campaignLevel3Button.interactable = false;
+                levelButton.interactable = false;
             }
         }
     }
@@ -84,15 +76,12 @@ public class LevelSelectManager : MonoBehaviour
         string slot2Path = Path.Combine(Application.persistentDataPath, CustomLevelSlot2Name);
         string slot3Path = Path.Combine(Application.persistentDataPath, CustomLevelSlot3Name);
 
-        if (customLevelSlot1Button == null)
-        {
-            Debug.LogError("customLevelSlot1Button is not assigned in the Inspector.");
-        }
-        else
+        if (customLevelSlot1Button != null)
         {
             if (File.Exists(slot1Path))
             {
                 customLevelSlot1Button.interactable = true;
+                customLevelSlot1Button.onClick.RemoveAllListeners();
                 customLevelSlot1Button.onClick.AddListener(() => LoadCustomLevel(1));
             }
             else
@@ -100,16 +89,18 @@ public class LevelSelectManager : MonoBehaviour
                 customLevelSlot1Button.interactable = false;
             }
         }
-
-        if (customLevelSlot2Button == null)
-        {
-            Debug.LogError("customLevelSlot2Button is not assigned in the Inspector.");
-        }
         else
+        {
+            Debug.LogError("customLevelSlot1Button is not assigned in the Inspector.");
+        }
+
+
+        if (customLevelSlot2Button != null)
         {
             if (File.Exists(slot2Path))
             {
                 customLevelSlot2Button.interactable = true;
+                customLevelSlot2Button.onClick.RemoveAllListeners();
                 customLevelSlot2Button.onClick.AddListener(() => LoadCustomLevel(2));
             }
             else
@@ -117,16 +108,18 @@ public class LevelSelectManager : MonoBehaviour
                 customLevelSlot2Button.interactable = false;
             }
         }
-
-        if (customLevelSlot3Button == null)
-        {
-            Debug.LogError("customLevelSlot3Button is not assigned in the Inspector.");
-        }
         else
+        {
+            Debug.LogError("customLevelSlot2Button is not assigned in the Inspector.");
+        }
+
+
+        if (customLevelSlot3Button != null)
         {
             if (File.Exists(slot3Path))
             {
                 customLevelSlot3Button.interactable = true;
+                customLevelSlot3Button.onClick.RemoveAllListeners();
                 customLevelSlot3Button.onClick.AddListener(() => LoadCustomLevel(3));
             }
             else
@@ -134,19 +127,30 @@ public class LevelSelectManager : MonoBehaviour
                 customLevelSlot3Button.interactable = false;
             }
         }
+        else
+        {
+            Debug.LogError("customLevelSlot3Button is not assigned in the Inspector.");
+        }
     }
 
     void LoadCampaignLevel(string levelName)
     {
-        PlayerPrefs.SetString("CurrentLevelType", "Campaign");
-        PlayerPrefs.SetString("CurrentLevelName", levelName);
-        PlayerPrefs.Save();
-        if (string.IsNullOrEmpty(gameSceneName))
+        if (levelProgressManager.IsLevelUnlocked(levelName))
         {
-            Debug.LogError("gameSceneName is not set in the Inspector.");
-            return;
+            PlayerPrefs.SetString("CurrentLevelType", "Campaign");
+            PlayerPrefs.SetString("CurrentLevelName", levelName);
+            PlayerPrefs.Save();
+            if (string.IsNullOrEmpty(gameSceneName))
+            {
+                Debug.LogError("gameSceneName is not set in the Inspector.");
+                return;
+            }
+            SceneManager.LoadScene(gameSceneName);
         }
-        SceneManager.LoadScene(gameSceneName);
+        else
+        {
+            Debug.LogWarning($"Attempted to load locked campaign level: {levelName}");
+        }
     }
 
     void LoadCustomLevel(int slotNumber)

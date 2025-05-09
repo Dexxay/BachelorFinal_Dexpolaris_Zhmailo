@@ -2156,6 +2156,7 @@ GameObject:
   - component: {fileID: 1228449959}
   - component: {fileID: 1228449958}
   - component: {fileID: 1228449962}
+  - component: {fileID: 1228449963}
   m_Layer: 5
   m_Name: SelectorCanvas
   m_TagString: Untagged
@@ -2261,14 +2262,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e930abc87fa42945bfae7ddf77dc4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  campaignLevel1Button: {fileID: 1608117054}
-  campaignLevel2Button: {fileID: 1203374109}
-  campaignLevel3Button: {fileID: 1040499501}
+  campaignLevelButtons:
+  - {fileID: 1608117054}
+  - {fileID: 1203374109}
+  - {fileID: 1040499501}
+  levelProgressManager: {fileID: 1228449963}
   customLevelSlot1Button: {fileID: 664912300}
   customLevelSlot2Button: {fileID: 1995022915}
   customLevelSlot3Button: {fileID: 262360299}
   gameSceneName: PlayCustomLevels
   mainMenuSceneName: MainMenu
+--- !u!114 &1228449963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228449956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39968b975f59e0740a93854a1c5ea5a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  campaignLevels:
+  - campaign_1
+  - campaign_2
+  - campaign_3
 --- !u!1 &1298315006
 GameObject:
   m_ObjectHideFlags: 0
@@ -2623,9 +2642,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1228449956}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: ChooseLevel
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

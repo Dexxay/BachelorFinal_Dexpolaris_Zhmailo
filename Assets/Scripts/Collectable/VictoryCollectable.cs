@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class VictoryCollectable : Collectable
 {
     private UIManager uiManager;
+    private LevelProgressManager levelProgressManager;
 
     private void Awake()
     {
@@ -11,6 +12,12 @@ public class VictoryCollectable : Collectable
         if (uiManager == null)
         {
             Debug.LogError("UIManager not found on scene!");
+        }
+
+        levelProgressManager = FindObjectOfType<LevelProgressManager>();
+        if (levelProgressManager == null)
+        {
+            Debug.LogError("LevelProgressManager not found on scene!");
         }
     }
 
@@ -24,7 +31,14 @@ public class VictoryCollectable : Collectable
 
         if (currentLevelType == "Campaign")
         {
-            LevelProgressManager.UnlockNextLevel(currentLevelName);
+            if (levelProgressManager != null)
+            {
+                levelProgressManager.UnlockNextLevel(currentLevelName);
+            }
+            else
+            {
+                Debug.LogError("LevelProgressManager is null. Cannot unlock next level.");
+            }
         }
 
         Destroy(gameObject);
