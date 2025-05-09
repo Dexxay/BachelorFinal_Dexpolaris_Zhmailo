@@ -27,9 +27,6 @@ EditorBuildSettings:
     path: Assets/Scenes/ChooseLevelMenu.unity
     guid: e3f38ba573190b143bd377b19cdeaba7
   - enabled: 0
-    path: Assets/Scenes/ControlsMenu.unity
-    guid: a00faee21ccb340488abaf49997b6e32
-  - enabled: 0
     path: Assets/Scenes/Snow Playground.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}
