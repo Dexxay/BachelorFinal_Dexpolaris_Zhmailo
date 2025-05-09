@@ -167,6 +167,12 @@ public class LevelSaveLoadManager : MonoBehaviour
                         objectInfo = newObject.AddComponent<PlacedObjectInfo>();
                     }
                     objectInfo.originalPrefabName = objectData.prefabName;
+
+                    ObjectRadius placedObjectRadius = newObject.GetComponent<ObjectRadius>();
+                    if (placedObjectRadius != null)
+                    {
+                         placedObjectRadius.CheckAndShowRadiusVisualization();
+                    }
                 }
                 else
                 {

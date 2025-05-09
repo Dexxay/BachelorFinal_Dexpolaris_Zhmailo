@@ -128,6 +128,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 6
+  radiusColor: {r: 1, g: 0, b: 0.015686275, a: 1}
+  radiusTransparency: 0.2
 --- !u!1001 &6959055658538092316
 PrefabInstance:
   m_ObjectHideFlags: 0

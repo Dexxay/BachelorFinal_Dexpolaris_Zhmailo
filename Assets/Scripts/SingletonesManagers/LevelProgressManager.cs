@@ -102,4 +102,13 @@ public class LevelProgressManager : MonoBehaviour
     {
         return PlayerPrefs.GetInt(MaxLevelIndexReachedKey, 0);
     }
+    public void ResetProgress()
+    {
+        PlayerPrefs.DeleteKey(MaxLevelIndexReachedKey);
+        PlayerPrefs.SetInt(MaxLevelIndexReachedKey, 0);
+        PlayerPrefs.Save();
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
+    }
+
 }

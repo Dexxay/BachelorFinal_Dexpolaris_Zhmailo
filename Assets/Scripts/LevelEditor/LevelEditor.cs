@@ -96,7 +96,6 @@ public class LevelEditor : MonoBehaviour
         }
 
         if (cameraMovement != null) cameraMovement.HandleInput();
-        if (objectPlacement != null) objectPlacement.HandleInput();
     }
 
     public float GetTimeLimit()
@@ -293,7 +292,8 @@ public class LevelEditor : MonoBehaviour
         switch (objectType)
         {
             case 1: return startAsteroidPrefab;
-            case 2: return randomAsteroidPrefabs != null && randomAsteroidPrefabs.Count > 0 ? randomAsteroidPrefabs[UnityEngine.Random.Range(0, randomAsteroidPrefabs.Count)] : null;
+            case 2:
+                return randomAsteroidPrefabs != null && randomAsteroidPrefabs.Count > 0 ? randomAsteroidPrefabs[0] : null;
             case 3: return plasmaGunAsteroidPrefab;
             case 4: return laserSMGAsteroidPrefab;
             case 5: return ammo1AsteroidPrefab;
@@ -307,6 +307,56 @@ public class LevelEditor : MonoBehaviour
                 return null;
         }
     }
+
+    public GameObject GetRandomAsteroidPrefab()
+    {
+        if (randomAsteroidPrefabs != null && randomAsteroidPrefabs.Count > 0)
+        {
+            return randomAsteroidPrefabs[UnityEngine.Random.Range(0, randomAsteroidPrefabs.Count)];
+        }
+        else
+        {
+            Debug.LogWarning("Random asteroid prefabs list is empty or null.");
+            return null;
+        }
+    }
+
+    public bool CheckIfCanPlace(Vector3 placementPosition, GameObject prefabToSpawn, GameObject objectToIgnore = null)
+    {
+        if (LevelObjectsParent == null)
+        {
+            Debug.LogError("LevelObjectsParent in LevelEditor is not assigned during placement check.");
+            return false;
+        }
+
+        ObjectRadius newObjectRadiusComponent = prefabToSpawn.GetComponent<ObjectRadius>();
+        float newObjectRadius = newObjectRadiusComponent != null ? newObjectRadiusComponent.radius : 1f;
+
+        if (prefabToSpawn == startAsteroidPrefab && startAsteroidInstance != null && startAsteroidInstance != objectToIgnore) return false;
+        if (prefabToSpawn == finishAsteroidPrefab && finishAsteroidInstance != null && finishAsteroidInstance != objectToIgnore) return false;
+
+        bool canPlace = true;
+
+        foreach (Transform child in LevelObjectsParent.transform)
+        {
+            if (child.gameObject == objectToIgnore) continue;
+
+            ObjectRadius existingObjectRadiusComponent = child.GetComponent<ObjectRadius>();
+            if (existingObjectRadiusComponent != null)
+            {
+                float distanceXZ = Vector2.Distance(new Vector2(placementPosition.x, placementPosition.z), new Vector2(child.position.x, child.position.z));
+
+                if (distanceXZ < newObjectRadius + existingObjectRadiusComponent.radius)
+                {
+                    canPlace = false;
+                    break;
+                }
+            }
+        }
+
+        return canPlace;
+    }
+
 
     public GameObject GetPrefabByName(string prefabName)
     {

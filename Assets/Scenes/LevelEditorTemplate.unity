@@ -274,6 +274,9 @@ GameObject:
   - component: {fileID: 103990402}
   - component: {fileID: 103990405}
   - component: {fileID: 103990406}
+  - component: {fileID: 103990409}
+  - component: {fileID: 103990408}
+  - component: {fileID: 103990407}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -383,6 +386,7 @@ MonoBehaviour:
   gridSpacing: 1
   randomHeightRange: 5
   editorPlaneCollider: {fileID: 1929779907}
+  mainMenuSceneName: MainMenu
   minSliderTimeLimit: 60
   maxSliderTimeLimit: 180
   startAsteroidInstance: {fileID: 0}
@@ -454,6 +458,7 @@ MonoBehaviour:
   audioSource: {fileID: 103990406}
   setSound: {fileID: 8300000, guid: 0a274ba990e84c948a1aad202d6362e5, type: 3}
   deleteSound: {fileID: 8300000, guid: 9c5d6f4b9c70b8e4f8380c07dbc2e3db, type: 3}
+  previewHeightOffset: 0.1
 --- !u!82 &103990406
 AudioSource:
   m_ObjectHideFlags: 0
@@ -550,6 +555,46 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &103990407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103990397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a14d537965324b24bb74a37641b5ebdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  validPlacementColor: {r: 0, g: 1, b: 0, a: 1}
+  invalidPlacementColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &103990408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103990397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 018f1395ec589424f87a65fac37987af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  deleteSound: {fileID: 0}
+--- !u!114 &103990409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103990397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0687a061b9f3544eaaa9635f76a1629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &117524158
 GameObject:
   m_ObjectHideFlags: 0
@@ -1440,7 +1485,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &380658177
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1680,7 +1725,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1756,7 +1801,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

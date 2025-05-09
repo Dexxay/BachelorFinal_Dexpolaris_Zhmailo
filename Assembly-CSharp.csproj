@@ -64,7 +64,7 @@
     <Compile Include="Assets\Scripts\Player\MainPlayer.cs" />
     <Compile Include="Assets\Scripts\MenuScripts\InfoMenu.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\EditorCameraMovement.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\EditorObjectPlacement.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorObjectPlacement.cs" />
     <Compile Include="Assets\Scripts\Player\ScoreManager.cs" />
     <Compile Include="Assets\Scripts\Enemies\SpawnerScript.cs" />
     <Compile Include="Assets\Scripts\Collectable\GunCollectable.cs" />
@@ -105,6 +105,9 @@
     <Compile Include="Assets\Scripts\MenuScripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Enemies\NavAgentTest.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorObjectDeleter.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorPlacementPreviewHandler.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorInputHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -841,6 +844,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Unity.PlayerPrefsEditor.Editor.csproj">
+      <Project>{35F336DA-9788-0668-68C4-DA27036D98E8}</Project>
+      <Name>Unity.PlayerPrefsEditor.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.PlayerPrefsEditor.Samples.SampleScene.csproj">
+      <Project>{00FDAF50-3A58-A24B-EE54-31CFD2AEB674}</Project>
+      <Name>Unity.PlayerPrefsEditor.Samples.SampleScene</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.PlayerPrefsEditor.EditorResources.csproj">
+      <Project>{9DAB5D1D-818F-B6B4-A449-45AC6F8F8657}</Project>
+      <Name>Unity.PlayerPrefsEditor.EditorResources</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

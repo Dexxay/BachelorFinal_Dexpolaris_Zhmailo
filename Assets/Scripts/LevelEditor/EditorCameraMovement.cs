@@ -26,7 +26,7 @@ public class EditorCameraMovement : MonoBehaviour
 
         if (editorCamera == null)
         {
-            Debug.LogError("Камера редактора не знайдена для EditorCameraMovement!");
+            Debug.LogError("No editor camera for EditorCameraMovement found!");
             enabled = false;
             return;
         }
