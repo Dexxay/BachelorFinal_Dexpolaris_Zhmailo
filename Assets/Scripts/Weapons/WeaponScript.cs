@@ -91,7 +91,14 @@ public class WeaponScript : MonoBehaviour
         readyToShoot = false;
 
         muzzleFlash.Play();
-        audioSource.PlayOneShot(shotSound);
+        if (bulletsPerTap != 1)
+        {
+            if (!audioSource.isPlaying)
+                audioSource.PlayOneShot(shotSound);
+        }
+        else
+            audioSource.PlayOneShot(shotSound);
+
         animator.SetTrigger("RECOIL");
 
         float x = UnityEngine.Random.Range(-spreadX, spreadX);

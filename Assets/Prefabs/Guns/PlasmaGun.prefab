@@ -5086,7 +5086,7 @@ MonoBehaviour:
   magazineSize: 2
   bulletsPerTap: 2
   allowButtonHold: 1
-  timeBetweenShooting: 1.1
+  timeBetweenShooting: 1.3
   timeBetweenShots: 0
   spreadX: 0.05
   spreadY: 0.01
@@ -5094,7 +5094,7 @@ MonoBehaviour:
   reloadTime: 1.1
   muzzleFlash: {fileID: 1972368667223490073}
   audioSource: {fileID: 1399834241}
-  shotSound: {fileID: 8300000, guid: c8f518b61a655814899102bd698ab7cd, type: 3}
+  shotSound: {fileID: 8300000, guid: e195d3f219de4a44e9b504abf5981c96, type: 3}
   hitSound: {fileID: 8300000, guid: 9c5d6f4b9c70b8e4f8380c07dbc2e3db, type: 3}
   animator: {fileID: 1399834242}
   ignoreLayers:
