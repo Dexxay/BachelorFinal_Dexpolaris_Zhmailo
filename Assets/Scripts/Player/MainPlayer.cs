@@ -11,6 +11,7 @@ public class MainPlayer : MonoBehaviour
     [SerializeField] private MouseMovement mouseMovement;
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private CharacterController characterController;
+    [SerializeField] private MapTimer mapTimer;
 
     public WeaponManager WeaponManager => weaponManager;
     public PlayerHealthManager PlayerHealthManager => playerHealthManager;
@@ -18,6 +19,7 @@ public class MainPlayer : MonoBehaviour
     public MouseMovement MouseMovement => mouseMovement;
     public ScoreManager ScoreManager => scoreManager;
     public CharacterController CharacterController => characterController;
+    public MapTimer MapTimer => mapTimer;
 
     private void Start()
     {

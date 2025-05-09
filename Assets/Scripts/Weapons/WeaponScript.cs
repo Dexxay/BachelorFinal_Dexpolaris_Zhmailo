@@ -67,6 +67,11 @@ public class WeaponScript : MonoBehaviour
             Reload();
         }
 
+        if (bulletsLeftInMagazine <= 0 && !reloading)
+        {
+            Reload();
+        }
+
         if (readyToShoot && shooting && !reloading)
         {
             if (bulletsLeftInMagazine > 0)

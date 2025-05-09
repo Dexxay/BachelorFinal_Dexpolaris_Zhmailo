@@ -93,6 +93,8 @@ public class GameLevelLoader : MonoBehaviour
 
         SetupBlackHole(loadedLevelData);
 
+        SetupMapTimer(loadedLevelData);
+
         StartCoroutine(PlayRocketEffectBeforeEnd());
     }
 
@@ -233,6 +235,28 @@ public class GameLevelLoader : MonoBehaviour
         else
         {
             Debug.LogWarning("BlackHoleMover script not found in the scene. Cannot configure Black Hole.");
+        }
+    }
+
+    private void SetupMapTimer(LevelData loadedLevelData)
+    {
+        if (player != null)
+        {
+            MapTimer mapTimer = player.MapTimer;
+
+            if (mapTimer != null)
+            {
+                mapTimer.mapDurationInSeconds = loadedLevelData.timeLimit;
+                Debug.Log($"MapTimer duration set to level time limit: {loadedLevelData.timeLimit} seconds.");
+            }
+            else
+            {
+                Debug.LogWarning("MapTimer component not found on the Player object. Cannot configure Map Timer.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Player object is null. Cannot configure Map Timer.");
         }
     }
 

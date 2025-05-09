@@ -3,7 +3,7 @@ using TMPro;
 
 public class MapTimer : MonoBehaviour
 {
-    [SerializeField] private float mapDurationInSeconds = 120f;
+    [SerializeField] public float mapDurationInSeconds = 120f;
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private PlayerHealthManager playerHealthManager;
 

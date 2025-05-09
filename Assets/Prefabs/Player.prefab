@@ -5226,6 +5226,7 @@ MonoBehaviour:
   mouseMovement: {fileID: 7953649203427449790}
   scoreManager: {fileID: 1197718939}
   characterController: {fileID: 7953649203427449728}
+  mapTimer: {fileID: 0}
 --- !u!143 &7953649203427449728
 CharacterController:
   m_ObjectHideFlags: 0
