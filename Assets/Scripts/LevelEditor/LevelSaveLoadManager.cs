@@ -68,14 +68,14 @@ public class ObjectData
     public ObjectData(GameObject obj, GameObject startInstance, GameObject finishInstance)
     {
         PlacedObjectInfo placedInfo = obj.GetComponent<PlacedObjectInfo>();
-        if (placedInfo != null)
+        if (placedInfo != null && !string.IsNullOrEmpty(placedInfo.originalPrefabName))
         {
             prefabName = placedInfo.originalPrefabName;
         }
         else
         {
             prefabName = obj.name.Replace("(Clone)", "").Trim();
-            Debug.LogWarning($"Object {obj.name} does not have PlacedObjectInfo. Using object name as prefab name.");
+            Debug.LogWarning($"Object {obj.name} does not have PlacedObjectInfo with originalPrefabName or it is empty. Using object name as prefab name: {prefabName}");
         }
 
         position = obj.transform.position;
@@ -170,7 +170,7 @@ public class LevelSaveLoadManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning($"Prefab with name '{objectData.prefabName}' not found in LevelEditor! Object will not be created.");
+                    Debug.LogWarning($"Prefab with name '{objectData.prefabName}' not found in LevelEditor's prefabs! Object will not be created.");
                 }
             }
 
@@ -237,7 +237,7 @@ public class LevelSaveLoadManager : MonoBehaviour
 
             foreach (ObjectData objectData in loadedData.objects)
             {
-                GameObject prefabToInstantiate = FindPrefabByName(objectData.prefabName, availablePrefabs);
+                GameObject prefabToInstantiate = FindPrefabByNameInList(objectData.prefabName, availablePrefabs);
                 if (prefabToInstantiate != null)
                 {
                     GameObject instantiatedObject = Instantiate(prefabToInstantiate, (Vector3)objectData.position, (Quaternion)objectData.rotation, parentTransform);
@@ -267,14 +267,14 @@ public class LevelSaveLoadManager : MonoBehaviour
         }
     }
 
-    private GameObject FindPrefabByName(string prefabName, List<GameObject> availablePrefabs)
+    private GameObject FindPrefabByNameInList(string prefabName, List<GameObject> prefabs)
     {
-        if (availablePrefabs == null || availablePrefabs.Count == 0)
+        if (prefabs == null || prefabs.Count == 0)
         {
-            Debug.LogWarning("Available prefabs list is null or empty in LevelSaveLoadManager.Cannot find prefab by name.");
+            Debug.LogWarning("Provided prefab list is null or empty. Cannot find prefab by name.");
             return null;
         }
-        foreach (var prefab in availablePrefabs)
+        foreach (var prefab in prefabs)
         {
             if (prefab != null && prefab.name == prefabName)
             {

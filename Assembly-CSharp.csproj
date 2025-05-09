@@ -57,17 +57,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Visuals\PendulumRotatorY.cs" />
-    <Compile Include="Assets\Scripts\UI\MenuScripts\ControlsMenu.cs" />
     <Compile Include="Assets\Scripts\Collectable\RotateObject.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\Enemies\SkeletonBehaviour.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\PlacedObjectInfo.cs" />
     <Compile Include="Assets\Scripts\Player\MainPlayer.cs" />
-    <Compile Include="Assets\Scripts\UI\MenuScripts\InfoMenu.cs" />
+    <Compile Include="Assets\Scripts\MenuScripts\InfoMenu.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\EditorCameraMovement.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\EditorObjectPlacement.cs" />
     <Compile Include="Assets\Scripts\Player\ScoreManager.cs" />
-    <Compile Include="Assets\Scripts\UI\MenuScripts\LevelMenu.cs" />
     <Compile Include="Assets\Scripts\Enemies\SpawnerScript.cs" />
     <Compile Include="Assets\Scripts\Collectable\GunCollectable.cs" />
     <Compile Include="Assets\Scripts\UI\MapTimer.cs" />
@@ -91,7 +89,6 @@
     <Compile Include="Assets\Scripts\BlackHole\BlackHoleMover.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamagable.cs" />
-    <Compile Include="Assets\Scripts\SingletonesManagers\ControlsManager.cs" />
     <Compile Include="Assets\Scripts\Player\MouseMovement.cs" />
     <Compile Include="Assets\Scripts\UI\HealthCount.cs" />
     <Compile Include="Assets\Scripts\Collectable\Collectable.cs" />
@@ -102,11 +99,12 @@
     <Compile Include="Assets\Scripts\Interfaces\IEnemy.cs" />
     <Compile Include="Assets\Scripts\Collectable\VictoryCollectable.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerFallDetector.cs" />
-    <Compile Include="Assets\Scripts\UI\MenuScripts\MainMenu.cs" />
-    <Compile Include="Assets\Scripts\UI\MenuScripts\NewBehaviourScript.cs" />
+    <Compile Include="Assets\Scripts\MenuScripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Enemies\NavAgentTest.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
     <Compile Include="Assets\Scripts\Enemies\LaserWeapon.cs" />
+    <Compile Include="Assets\Scripts\MenuScripts\LevelSelectManager.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\LevelProgressManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

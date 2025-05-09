@@ -8,19 +8,19 @@ using UnityEngine.SceneManagement;
 public class EditorUIHandler : MonoBehaviour
 {
     [Header("Pause Menu UI")]
-    public GameObject pauseMenuUI;
-    public Slider timeLimitSlider;
-    public TextMeshProUGUI timeLimitText;
-    public TextMeshProUGUI errorText;
+    [SerializeField] private GameObject pauseMenuUI;
+    [SerializeField] private Slider timeLimitSlider;
+    [SerializeField] private TextMeshProUGUI timeLimitText;
+    [SerializeField] private TextMeshProUGUI errorText;
 
     [Header("Confirmation Dialog UI")]
-    public GameObject confirmationDialogPanel;
-    public TextMeshProUGUI confirmationMessageText;
-    public Button yesButton;
-    public Button noButton;
+    [SerializeField] private GameObject confirmationDialogPanel;
+    [SerializeField] private TextMeshProUGUI confirmationMessageText;
+    [SerializeField] private Button yesButton;
+    [SerializeField] private Button noButton;
 
     [Header("Editor UI Elements")]
-    public TextMeshProUGUI selectedElementText;
+    [SerializeField] private TextMeshProUGUI selectedElementText;
 
     private LevelEditor levelEditor;
     private Coroutine clearMessageCoroutine;
@@ -29,6 +29,11 @@ public class EditorUIHandler : MonoBehaviour
     public void Init(LevelEditor editor)
     {
         levelEditor = editor;
+        if (levelEditor == null)
+        {
+            Debug.LogError("LevelEditor is not assigned to EditorUIHandler.");
+            return;
+        }
 
         if (pauseMenuUI != null)
         {
@@ -41,8 +46,8 @@ public class EditorUIHandler : MonoBehaviour
 
         if (timeLimitSlider != null)
         {
-            timeLimitSlider.minValue = levelEditor.minSliderTimeLimit;
-            timeLimitSlider.maxValue = levelEditor.maxSliderTimeLimit;
+            timeLimitSlider.minValue = levelEditor.MinSliderTimeLimit;
+            timeLimitSlider.maxValue = levelEditor.MaxSliderTimeLimit;
             timeLimitSlider.onValueChanged.AddListener(SetTimeLimitFromSlider);
         }
         else
@@ -87,11 +92,10 @@ public class EditorUIHandler : MonoBehaviour
         {
             Debug.LogError("noButton not assigned in EditorUIHandler!");
         }
-        if (levelEditor != null)
-        {
-            UpdateTimeLimitText(levelEditor.GetTimeLimit());
-            if (timeLimitSlider != null) timeLimitSlider.value = levelEditor.GetTimeLimit();
-        }
+
+        UpdateTimeLimitText(levelEditor.GetTimeLimit());
+        if (timeLimitSlider != null) timeLimitSlider.value = levelEditor.GetTimeLimit();
+
 
         if (selectedElementText == null)
         {
@@ -213,7 +217,10 @@ public class EditorUIHandler : MonoBehaviour
         {
             confirmationDialogPanel.SetActive(false);
         }
-        Time.timeScale = 1f;
+        if (pauseMenuUI == null || !pauseMenuUI.activeSelf)
+        {
+            Time.timeScale = 1f;
+        }
     }
 
     public void OnYesClicked()
@@ -224,52 +231,53 @@ public class EditorUIHandler : MonoBehaviour
 
     public void OnNoClicked()
     {
-        onConfirmAction = null;
+        onConfirmAction = null; 
         HideConfirmationDialog();
-        if (pauseMenuUI != null && !pauseMenuUI.activeSelf)
-        {
-            Time.timeScale = 1f;
-        }
     }
 
     public void MainMenuButton_Clicked()
     {
+        if (levelEditor == null) return;
         ShowConfirmationDialog("Return to main menu?\nUnsaved changes will be lost.",
             () => {
-                if (levelEditor != null) levelEditor.GoToMainMenuConfirmed();
+                levelEditor.GoToMainMenuConfirmed();
             });
     }
 
     public void SaveLevelButton_Clicked(int slot)
     {
+        if (levelEditor == null) return;
         ShowConfirmationDialog($"Save level to slot {slot}?",
             () => {
-                if (levelEditor != null) levelEditor.SaveLevelConfirmed(slot);
+                levelEditor.SaveLevelConfirmed(slot);
             });
     }
 
     public void LoadLevelButton_Clicked(int slot)
     {
+        if (levelEditor == null) return;
         ShowConfirmationDialog($"Load level from slot {slot}?\nUnsaved changes in the current level will be lost.",
            () => {
-               if (levelEditor != null) levelEditor.LoadLevelConfirmed(slot);
+               levelEditor.LoadLevelConfirmed(slot);
            });
     }
 
     public void DeleteLevelButton_Clicked(int slot)
     {
+        if (levelEditor == null) return;
         ShowConfirmationDialog($"Delete level in slot {slot}?",
             () => {
-                if (levelEditor != null) levelEditor.DeleteLevelConfirmed(slot);
+                levelEditor.DeleteLevelConfirmed(slot);
             });
     }
 
 
     public void ClearLevelButton_Clicked()
     {
+        if (levelEditor == null) return;
         ShowConfirmationDialog("Clear all objects on the level?",
             () => {
-                if (levelEditor != null) levelEditor.ClearAllObjectsConfirmed();
+                levelEditor.ClearAllObjectsConfirmed();
             });
     }
 }

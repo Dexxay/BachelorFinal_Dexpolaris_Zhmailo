@@ -111,4 +111,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetYPosition: -550
-  moveDurationInSeconds: 60
+  moveDurationInSeconds: 180

@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject[] objectsToShowAtDamage;
     [SerializeField] private GameObject[] objectsToShowAtHeal;
     [SerializeField] private GameObject[] objectsToShowAtVictory;
+    [SerializeField] private string playMenuSceneName = "GameLevelSelector";
 
     [SerializeField] private float damageDelay;
 
@@ -25,7 +26,7 @@ public class UIManager : MonoBehaviour
     public void ReturnToMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(playMenuSceneName);
     }
 
     public void Restart()

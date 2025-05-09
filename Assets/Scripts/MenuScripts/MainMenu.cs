@@ -5,19 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+
+    [SerializeField] private string chooseLevel = "GameLevelSelector";
+    [SerializeField] private string chooseInfo = "InfoMenu";
+    [SerializeField] private string chooseEditor = "LevelEditorTemplate";
+
+
+
     public void ChooseLevel()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(chooseLevel);
     }
 
     public void ChooseInfo()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(chooseInfo);
     }
 
     public void ChooseEditor()
     {
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene(chooseEditor);
     }
 
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class VictoryCollectable : Collectable
 {
@@ -9,7 +10,7 @@ public class VictoryCollectable : Collectable
         uiManager = FindObjectOfType<UIManager>();
         if (uiManager == null)
         {
-            Debug.LogError("UIManager не знайдено на сцені!");
+            Debug.LogError("UIManager not found on scene!");
         }
     }
 
@@ -17,6 +18,15 @@ public class VictoryCollectable : Collectable
     {
         character.OnPlayerWon();
         uiManager?.ShowVictoryScreen();
+
+        string currentLevelType = PlayerPrefs.GetString("CurrentLevelType", "");
+        string currentLevelName = PlayerPrefs.GetString("CurrentLevelName", "");
+
+        if (currentLevelType == "Campaign")
+        {
+            LevelProgressManager.UnlockNextLevel(currentLevelName);
+        }
+
         Destroy(gameObject);
     }
 }

@@ -25,23 +25,29 @@ public class EditorObjectPlacement : MonoBehaviour
 
         if (levelEditor == null)
         {
+            Debug.LogError("LevelEditor is not assigned to EditorObjectPlacement.");
             enabled = false;
             return;
         }
         if (editorCamera == null)
         {
+            Debug.LogError("EditorCamera is not assigned to EditorObjectPlacement.");
             enabled = false;
             return;
         }
 
-        gridSpacing = levelEditor.gridSpacing;
-        randomHeightRange = levelEditor.randomHeightRange;
-        editorPlaneCollider = levelEditor.editorPlaneCollider;
+        gridSpacing = levelEditor.GridSpacing;
+        randomHeightRange = levelEditor.RandomHeightRange;
+        editorPlaneCollider = levelEditor.EditorPlaneCollider;
 
-        if (levelEditor.uiHandler != null)
+        if (levelEditor.UiHandler != null)
         {
             string displayString = GetElementDisplayName(currentObjectToPlace);
-            levelEditor.uiHandler.UpdateSelectedElementDisplay(displayString);
+            levelEditor.UiHandler.UpdateSelectedElementDisplay(displayString);
+        }
+        else
+        {
+            Debug.LogError("UiHandler in LevelEditor is not assigned.");
         }
     }
 
@@ -68,10 +74,14 @@ public class EditorObjectPlacement : MonoBehaviour
 
         if (currentObjectToPlace != previousObjectToPlace)
         {
-            if (levelEditor.uiHandler != null)
+            if (levelEditor.UiHandler != null)
             {
                 string displayString = GetElementDisplayName(currentObjectToPlace);
-                levelEditor.uiHandler.UpdateSelectedElementDisplay(displayString);
+                levelEditor.UiHandler.UpdateSelectedElementDisplay(displayString);
+            }
+            else
+            {
+                Debug.LogError("UiHandler in LevelEditor is not assigned.");
             }
         }
     }
@@ -108,6 +118,9 @@ public class EditorObjectPlacement : MonoBehaviour
 
     private void HandleObjectPlacementAndDeletion()
     {
+        if (levelEditor == null) return;
+
+
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
             Ray ray = editorCamera.ScreenPointToRay(Input.mousePosition);
@@ -143,7 +156,13 @@ public class EditorObjectPlacement : MonoBehaviour
                         ObjectRadius newObjectRadiusComponent = prefabToSpawn.GetComponent<ObjectRadius>();
                         float newObjectRadius = newObjectRadiusComponent != null ? newObjectRadiusComponent.radius : 1f;
 
-                        foreach (Transform child in levelEditor.levelObjectsParent.transform)
+                        if (levelEditor.LevelObjectsParent == null)
+                        {
+                            Debug.LogError("LevelObjectsParent in LevelEditor is not assigned.");
+                            return;
+                        }
+
+                        foreach (Transform child in levelEditor.LevelObjectsParent.transform)
                         {
                             ObjectRadius existingObjectRadiusComponent = child.GetComponent<ObjectRadius>();
                             if (existingObjectRadiusComponent != null)
@@ -163,7 +182,7 @@ public class EditorObjectPlacement : MonoBehaviour
                             float randomRotationY = Random.Range(0f, 360f);
                             Quaternion objectRotation = Quaternion.Euler(0f, randomRotationY, 0f);
 
-                            GameObject newObject = Instantiate(prefabToSpawn, placementPosition, objectRotation, levelEditor.levelObjectsParent.transform);
+                            GameObject newObject = Instantiate(prefabToSpawn, placementPosition, objectRotation, levelEditor.LevelObjectsParent.transform);
 
                             PlacedObjectInfo objectInfo = newObject.GetComponent<PlacedObjectInfo>();
                             if (objectInfo == null) objectInfo = newObject.AddComponent<PlacedObjectInfo>();
@@ -172,7 +191,7 @@ public class EditorObjectPlacement : MonoBehaviour
                             if (currentObjectToPlace == 1) levelEditor.startAsteroidInstance = newObject;
                             if (currentObjectToPlace == 0) levelEditor.finishAsteroidInstance = newObject;
 
-                            audioSource.PlayOneShot(setSound);
+                            if (audioSource != null && setSound != null) audioSource.PlayOneShot(setSound);
 
                             levelEditor.ClearMessage();
                         }
@@ -185,7 +204,12 @@ public class EditorObjectPlacement : MonoBehaviour
                 else if (Input.GetMouseButtonDown(1))
                 {
                     PlacedObjectInfo objectToRemoveInfo = hit.collider.GetComponentInParent<PlacedObjectInfo>();
-                    if (objectToRemoveInfo != null && objectToRemoveInfo.transform.parent == levelEditor.levelObjectsParent.transform)
+                    if (levelEditor.LevelObjectsParent == null)
+                    {
+                        Debug.LogError("LevelObjectsParent in LevelEditor is not assigned.");
+                        return;
+                    }
+                    if (objectToRemoveInfo != null && objectToRemoveInfo.transform.parent == levelEditor.LevelObjectsParent.transform)
                     {
                         if (objectToRemoveInfo.gameObject == levelEditor.startAsteroidInstance)
                         {
@@ -196,7 +220,7 @@ public class EditorObjectPlacement : MonoBehaviour
                             levelEditor.finishAsteroidInstance = null;
                         }
                         Destroy(objectToRemoveInfo.gameObject);
-                        audioSource.PlayOneShot(deleteSound);
+                        if (audioSource != null && deleteSound != null) audioSource.PlayOneShot(deleteSound);
                         levelEditor.ShowMessage("Object deleted.", false);
                     }
                 }

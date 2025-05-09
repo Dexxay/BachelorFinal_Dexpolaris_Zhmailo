@@ -1,13 +1,13 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public class GameLevelLoader : MonoBehaviour
 {
     public LevelSaveLoadManager levelSaveLoadManager;
     public List<GameObject> availablePrefabs;
     public Transform levelObjectsParentTransform;
-    public int levelSlotToLoad = 1;
 
     private MainPlayer player;
     private float timeLimit;
@@ -31,7 +31,25 @@ public class GameLevelLoader : MonoBehaviour
 
         ClearExistingGameObjects();
 
-        LevelData loadedLevelData = LoadLevelData();
+        LevelData loadedLevelData = null;
+        string levelType = PlayerPrefs.GetString("CurrentLevelType");
+
+        if (levelType == "Campaign")
+        {
+            string levelName = PlayerPrefs.GetString("CurrentLevelName");
+            loadedLevelData = LoadCampaignLevelData(levelName);
+        }
+        else if (levelType == "Custom")
+        {
+            int slot = PlayerPrefs.GetInt("CurrentLevelSlot");
+            loadedLevelData = levelSaveLoadManager.LoadLevelForGame(slot, levelObjectsParentTransform, availablePrefabs);
+        }
+        else
+        {
+            Debug.LogError("Unknown level type or level not specified.");
+            return;
+        }
+
 
         if (loadedLevelData != null)
         {
@@ -42,6 +60,79 @@ public class GameLevelLoader : MonoBehaviour
             HandleFailedLoad();
         }
     }
+
+    private LevelData LoadCampaignLevelData(string levelName)
+    {
+        string filePath = Path.Combine(Application.streamingAssetsPath, levelName + ".dat");
+
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError($"Campaign level file not found at {filePath}");
+            return null;
+        }
+
+        try
+        {
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            LevelData loadedData;
+            using (FileStream stream = new FileStream(filePath, FileMode.Open))
+            {
+                loadedData = (LevelData)formatter.Deserialize(stream);
+            }
+
+            if (levelObjectsParentTransform == null)
+            {
+                Debug.LogError("Parent transform for loaded objects not specified!");
+            }
+            if (availablePrefabs == null || availablePrefabs.Count == 0)
+            {
+                Debug.LogError("Available prefabs list is empty!");
+                return loadedData;
+            }
+
+            foreach (ObjectData objectData in loadedData.objects)
+            {
+                GameObject prefabToInstantiate = FindPrefabByNameInList(objectData.prefabName, availablePrefabs);
+                if (prefabToInstantiate != null)
+                {
+                    GameObject instantiatedObject = Instantiate(prefabToInstantiate, (Vector3)objectData.position, (Quaternion)objectData.rotation, levelObjectsParentTransform);
+
+                    if (objectData.isStartAsteroid)
+                    {
+                        instantiatedObject.tag = "StartAsteroid";
+                    }
+                    if (objectData.isFinishAsteroid)
+                    {
+                        instantiatedObject.tag = "FinishAsteroid";
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"Prefab with name '{objectData.prefabName}' not found in available prefabs for game! Object will not be created.");
+                }
+            }
+            Debug.Log($"Campaign level '{levelName}' loaded successfully.");
+            return loadedData;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error loading campaign level from {filePath}: {e.Message}");
+            return null;
+        }
+    }
+
+    private GameObject FindPrefabByNameInList(string prefabName, List<GameObject> prefabs)
+    {
+        foreach (var prefab in prefabs)
+        {
+            if (prefab != null && prefab.name == prefabName)
+            {
+                return prefab;
+            }
+        }
+        return null;
+    }
+
 
     private void InitializePlayer()
     {
@@ -55,9 +146,9 @@ public class GameLevelLoader : MonoBehaviour
     private bool ValidateDependencies()
     {
         bool isValid = true;
-        if (levelSaveLoadManager == null)
+        if (levelSaveLoadManager == null && PlayerPrefs.GetString("CurrentLevelType") == "Custom")
         {
-            Debug.LogError("LevelSaveLoadManager not assigned in GameLevelLoader!");
+            Debug.LogError("LevelSaveLoadManager not assigned in GameLevelLoader! Needed for custom levels.");
             isValid = false;
         }
         if (availablePrefabs == null || availablePrefabs.Count == 0)
@@ -70,11 +161,6 @@ public class GameLevelLoader : MonoBehaviour
             Debug.LogWarning("LevelObjectsParentTransform not assigned in GameLevelLoader! Level objects will be created at the scene root.");
         }
         return isValid;
-    }
-
-    private LevelData LoadLevelData()
-    {
-        return levelSaveLoadManager.LoadLevelForGame(levelSlotToLoad, levelObjectsParentTransform, availablePrefabs);
     }
 
     private void HandleSuccessfulLoad(LevelData loadedLevelData)
@@ -100,7 +186,7 @@ public class GameLevelLoader : MonoBehaviour
 
     private void HandleFailedLoad()
     {
-        Debug.LogError($"Failed to load level from slot {levelSlotToLoad} for game.");
+        Debug.LogError($"Failed to load level.");
     }
 
     private void ClearExistingGameObjects()
@@ -194,7 +280,7 @@ public class GameLevelLoader : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("BeaconEffect child object doesn't have a ParticleSystem component.");
+                    Debug.LogWarning("BeaconEffect child object does not have a ParticleSystem component.");
                 }
             }
             else
@@ -271,11 +357,5 @@ public class GameLevelLoader : MonoBehaviour
             rocketEffectPlayed = true;
             Debug.Log($"Rocket effect played '{timeBeforeEndForEffect}' seconds before time runs out.");
         }
-    }
-
-    public void LoadSelectedLevel(int slot)
-    {
-        levelSlotToLoad = slot;
-        PerformLoad();
     }
 }
