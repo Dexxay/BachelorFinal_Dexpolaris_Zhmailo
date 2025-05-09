@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\Player\ScoreManager.cs" />
     <Compile Include="Assets\Scripts\Enemies\SpawnerScript.cs" />
     <Compile Include="Assets\Scripts\Collectable\GunCollectable.cs" />
+    <Compile Include="Assets\Scripts\MenuScripts\LevelSelectManager.cs" />
     <Compile Include="Assets\Scripts\UI\MapTimer.cs" />
     <Compile Include="Assets\Scripts\Collectable\TestDamageCollectable.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\LevelSaveLoadManager.cs" />
@@ -78,10 +79,12 @@
     <Compile Include="Assets\Scripts\LevelEditor\LevelEditor.cs" />
     <Compile Include="Assets\Scripts\Visuals\VerticalPendulumMover.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\EditorUIHandler.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\LevelProgressManager.cs" />
     <Compile Include="Assets\Scripts\Enemies\GhostBehaviour.cs" />
     <Compile Include="Assets\Scripts\Collectable\AmmoCollectable.cs" />
     <Compile Include="Assets\Scripts\Weapons\WeaponScript.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\GameLevelLoader.cs" />
+    <Compile Include="Assets\Scripts\Enemies\LaserWeapon.cs" />
     <Compile Include="Assets\Scripts\Enemies\LaserTurretBehaviour.cs" />
     <Compile Include="Assets\Scripts\UI\ScoreCount.cs" />
     <Compile Include="Assets\Scripts\ScriptableObjects\KeyCodesDefaults.cs" />
@@ -102,9 +105,6 @@
     <Compile Include="Assets\Scripts\MenuScripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Enemies\NavAgentTest.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
-    <Compile Include="Assets\Scripts\Enemies\LaserWeapon.cs" />
-    <Compile Include="Assets\Scripts\MenuScripts\LevelSelectManager.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\LevelProgressManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
