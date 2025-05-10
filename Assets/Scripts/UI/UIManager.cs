@@ -146,6 +146,11 @@ public class UIManager : MonoBehaviour
             toDisable.SetActive(false);
         }
 
+        foreach (var toDisable in objectsToShowAtHeal)
+        {
+            toDisable.SetActive(false);
+        }
+
         foreach (var toDisable in objectsToShowAtPause)
         {
             toDisable.SetActive(false);
