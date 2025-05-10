@@ -48,6 +48,11 @@ public class UIManager : MonoBehaviour
             toDisable.SetActive(false);
         }
 
+        foreach (var toDisable in objectsToShowAtHeal)
+        {
+            toDisable.SetActive(false);
+        }
+
         foreach (var toEnable in objectsToShowAtPause)
         {
             toEnable.SetActive(true);
@@ -109,6 +114,11 @@ public class UIManager : MonoBehaviour
         }
 
         foreach (var toDisable in objectsToShowAtDamage)
+        {
+            toDisable.SetActive(false);
+        }
+
+        foreach (var toDisable in objectsToShowAtHeal)
         {
             toDisable.SetActive(false);
         }

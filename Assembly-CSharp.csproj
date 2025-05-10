@@ -79,6 +79,7 @@
     <Compile Include="Assets\Scripts\LevelEditor\LevelEditor.cs" />
     <Compile Include="Assets\Scripts\Visuals\VerticalPendulumMover.cs" />
     <Compile Include="Assets\Scripts\LevelEditor\EditorUIHandler.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorPlacementPreviewHandler.cs" />
     <Compile Include="Assets\Scripts\SingletonesManagers\LevelProgressManager.cs" />
     <Compile Include="Assets\Scripts\Enemies\GhostBehaviour.cs" />
     <Compile Include="Assets\Scripts\Collectable\AmmoCollectable.cs" />
@@ -87,9 +88,11 @@
     <Compile Include="Assets\Scripts\Enemies\LaserWeapon.cs" />
     <Compile Include="Assets\Scripts\Enemies\LaserTurretBehaviour.cs" />
     <Compile Include="Assets\Scripts\UI\ScoreCount.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorObjectDeleter.cs" />
     <Compile Include="Assets\Scripts\ScriptableObjects\KeyCodesDefaults.cs" />
     <Compile Include="Assets\Scripts\Weapons\WeaponType.cs" />
     <Compile Include="Assets\Scripts\BlackHole\BlackHoleMover.cs" />
+    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorInputHandler.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamagable.cs" />
     <Compile Include="Assets\Scripts\Player\MouseMovement.cs" />
@@ -105,9 +108,6 @@
     <Compile Include="Assets\Scripts\MenuScripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Enemies\NavAgentTest.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorObjectDeleter.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorPlacementPreviewHandler.cs" />
-    <Compile Include="Assets\Scripts\LevelEditor\Placement\EditorInputHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
