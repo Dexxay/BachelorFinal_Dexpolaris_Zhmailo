@@ -27,7 +27,7 @@ public class AmmoCollectable : Collectable
         {
             WeaponScript weaponAmmo = character.WeaponManager.GetWeaponOfType(ammoType);
             weaponAmmo.AddBullets(ammoCount);
+            Destroy(gameObject);
         }
-        Destroy(gameObject);
     }
 }

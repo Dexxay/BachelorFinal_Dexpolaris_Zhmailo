@@ -130,6 +130,9 @@ MonoBehaviour:
   radius: 6
   radiusColor: {r: 1, g: 0, b: 0.015686275, a: 1}
   radiusTransparency: 0.2
+  planeHeightOffset: 0.1
+  editorSceneName: LevelEditorTemplate
+  editorPlaneTag: EditorPlane
 --- !u!1001 &434158858893736257
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -147,7 +150,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 972316442576160095, guid: 9a398a4c0cd5e20418d36f70cf43bb01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.005
+      value: 0.004
       objectReference: {fileID: 0}
     - target: {fileID: 972316442576160095, guid: 9a398a4c0cd5e20418d36f70cf43bb01, type: 3}
       propertyPath: m_LocalScale.y
@@ -155,7 +158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 972316442576160095, guid: 9a398a4c0cd5e20418d36f70cf43bb01, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.006033918
+      value: 0.004033918
       objectReference: {fileID: 0}
     - target: {fileID: 972316442576160095, guid: 9a398a4c0cd5e20418d36f70cf43bb01, type: 3}
       propertyPath: m_LocalPosition.x

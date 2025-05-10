@@ -19,6 +19,7 @@ public class PlayerHealthManager : MonoBehaviour
 
 
     public int Health => health;
+    public int MaxHealth => maxHealth;
 
     void Start()
     {
