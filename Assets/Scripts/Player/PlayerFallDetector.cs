@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerFallDetector : MonoBehaviour
 {
-    [SerializeField] private float fallThreshold = -50f;
-    [SerializeField] private int fallDamage = 500;
+    [SerializeField] private float fallThreshold = -30f;
 
     private PlayerHealthManager playerHealthManager;
 
@@ -23,7 +22,7 @@ public class PlayerFallDetector : MonoBehaviour
     {
         if (transform.position.y < fallThreshold)
         {
-            playerHealthManager?.ReduceHealth(fallDamage);
+            playerHealthManager?.ReduceHealth(playerHealthManager.MaxHealth);
         }
     }
 }

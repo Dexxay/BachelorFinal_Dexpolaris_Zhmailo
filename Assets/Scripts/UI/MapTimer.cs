@@ -4,6 +4,7 @@ using TMPro;
 public class MapTimer : MonoBehaviour
 {
     [SerializeField] public float mapDurationInSeconds = 120f;
+    [SerializeField] private float indicateTimeTillEnd = 30f;
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private PlayerHealthManager playerHealthManager;
 
@@ -22,12 +23,17 @@ public class MapTimer : MonoBehaviour
 
         timeLeft -= Time.deltaTime;
 
+        if (timeLeft <= indicateTimeTillEnd)
+        {
+            timerText.color = Color.red;
+        }
+
         if (timeLeft <= 0f && !timerEnded)
         {
             timeLeft = 0f;
             timerEnded = true;
             UpdateTimerText();
-            playerHealthManager.ReduceHealth(500);
+            playerHealthManager.ReduceHealth(playerHealthManager.MaxHealth);
             return;
         }
 
