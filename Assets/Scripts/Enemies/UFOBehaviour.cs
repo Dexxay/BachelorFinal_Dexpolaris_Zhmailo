@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UFO_AI : MonoBehaviour, IEnemy
+public class UFOBehaviour : MonoBehaviour, IEnemy
 {
     [Header("References")]
     [SerializeField] private LaserWeapon laserWeapon;
@@ -349,7 +349,7 @@ public class UFO_AI : MonoBehaviour, IEnemy
         {
             if (hitCollider.gameObject == gameObject) continue;
 
-            UFO_AI otherUFO = hitCollider.GetComponent<UFO_AI>();
+            UFOBehaviour otherUFO = hitCollider.GetComponent<UFOBehaviour>();
             if (otherUFO != null && !otherUFO.isDead)
             {
                 float distanceToNeighbor = Vector3.Distance(transform.position, hitCollider.transform.position);
