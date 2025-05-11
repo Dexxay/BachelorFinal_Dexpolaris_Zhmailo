@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1383009778803571571}
   - component: {fileID: 7452429142406830757}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 3919256078255485560}
   - component: {fileID: 7247978989016871605}
   - component: {fileID: 1902494366546662157}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DemolitionEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -380,7 +380,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 4
+      scalar: 10
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4975,7 +4975,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8089565471190296465}
   - component: {fileID: 5774781980946754536}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5068,7 +5068,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7303826154844363654}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ShotPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5083,7 +5083,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5064184587577202852}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.98, z: 0}
+  m_LocalPosition: {x: 0, y: -0.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5102,7 +5102,11 @@ GameObject:
   - component: {fileID: 6546931274633200764}
   - component: {fileID: 6546931274633200739}
   - component: {fileID: 6546931274633200738}
-  m_Layer: 0
+  - component: {fileID: 8782294784089115818}
+  - component: {fileID: 9018608889159662537}
+  - component: {fileID: 2637946469327995977}
+  - component: {fileID: 7468057107654186966}
+  m_Layer: 10
   m_Name: UFOEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5118,7 +5122,7 @@ Transform:
   m_GameObject: {fileID: 6546931274633200737}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -103.800674, y: -2.2436147, z: -115.05749}
-  m_LocalScale: {x: 3, y: 1, z: 3}
+  m_LocalScale: {x: 6, y: 2, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6546931274700535258}
@@ -5191,6 +5195,186 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8782294784089115818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6546931274633200737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 996a6f142aa8e3148b65e8702855cc35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserWeapon: {fileID: 9018608889159662537}
+  firePoint: {fileID: 7303826154844363654}
+  explosionEffect: {fileID: 7247978989016871605}
+  movementSpeed: 50
+  movementSpeedVariation: 3
+  rotationSpeed: 3
+  relativeAltitude: 15
+  relativeAltitudeVariation: 5
+  altitudeCorrectionForce: 3
+  altitudeResponsiveness: 3
+  horizontalMovementResponsiveness: 5
+  playerDetectionRadius: 125
+  flockDetectionRadius: 30
+  separationWeight: 3
+  alignmentWeight: 1
+  cohesionWeight: 0.5
+  ufoLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  circlingSeparationRadius: 40
+  circlingSeparationWeight: 3
+  circlingDistance: 30
+  circlingDistanceVariation: 10
+  circlingSpeedMultiplier: 0.5
+  circlingRadiusCorrectionWeight: 1.5
+  circlingTangentialWeight: 5
+  attackRange: 50
+  attackCooldown: 2.5
+  aimAheadFactor: 2.5
+  aimingTime: 0.5
+  maxHealth: 250
+  deathScoreValue: 100
+  destructionDelay: 0.2
+--- !u!114 &9018608889159662537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6546931274633200737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a95dc0259e0aec41a22172558937c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserSpeed: 100
+  laserDamage: 10
+  accuracy: 2.5
+  distanceTravelMultiplier: 2
+  laserLinePrefab: {fileID: 8089527844294005958, guid: a14a4654386848c4ab755f41853a3a2b, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  muzzleFlash: {fileID: 1848447827683875278}
+  audioSource: {fileID: 2637946469327995977}
+  shotSound: {fileID: 8300000, guid: 0a274ba990e84c948a1aad202d6362e5, type: 3}
+--- !u!82 &2637946469327995977
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6546931274633200737}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!54 &7468057107654186966
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6546931274633200737}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6546931274700535257
 GameObject:
   m_ObjectHideFlags: 0
@@ -5203,7 +5387,7 @@ GameObject:
   - component: {fileID: 6546931274700535253}
   - component: {fileID: 6546931274700535252}
   - component: {fileID: 6546931274700535259}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: UFOHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5299,7 +5483,7 @@ GameObject:
   - component: {fileID: 913887082348641475}
   - component: {fileID: 1848447827683875278}
   - component: {fileID: 44873864336624446}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5395,7 +5579,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -5405,7 +5589,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.05
+      scalar: 0.1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -5458,7 +5642,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 50
+      scalar: 75
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -5574,7 +5758,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.5
+      scalar: 2
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -5890,7 +6074,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 32
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0

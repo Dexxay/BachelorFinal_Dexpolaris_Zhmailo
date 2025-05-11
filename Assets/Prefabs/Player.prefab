@@ -5144,7 +5144,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 511
+    m_Bits: 1535
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -5354,7 +5354,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallThreshold: -50
-  fallDamage: 500
 --- !u!1 &7953649203491149532
 GameObject:
   m_ObjectHideFlags: 0

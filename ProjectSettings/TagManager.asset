@@ -12,6 +12,7 @@ TagManager:
   - EditorPlane
   - StartAsteroid
   - FinishAsteroid
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX
@@ -23,7 +24,7 @@ TagManager:
   - Collectable
   - Player
   - WeaponRenderer
-  - 
+  - UFO
   - 
   - 
   - 

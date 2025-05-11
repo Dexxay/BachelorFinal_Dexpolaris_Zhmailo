@@ -6,7 +6,7 @@ using UnityEngine;
 public class LaserWeapon : MonoBehaviour
 {
     [Header("Laser Settings")]
-    [SerializeField] private float laserSpeed = 50f;
+    [SerializeField] public float laserSpeed = 50f;
     [SerializeField] private int laserDamage = 25;
     [SerializeField] private float accuracy = 2.5f;
     [SerializeField] private float distanceTravelMultiplier = 2f;

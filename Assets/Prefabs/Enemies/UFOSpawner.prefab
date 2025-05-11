@@ -4988,7 +4988,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.05
+      scalar: 0.3
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -10142,6 +10142,7 @@ GameObject:
   - component: {fileID: 536406818769850408}
   - component: {fileID: 2273838575256645664}
   - component: {fileID: 3830881866833258360}
+  - component: {fileID: 4121460231999176687}
   m_Layer: 3
   m_Name: UFOSpawner
   m_TagString: Untagged
@@ -10195,7 +10196,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4a81d6c5819c847a6a46c6ecfe84c60a, type: 2}
+  - {fileID: 2100000, guid: 349b12d67102dfd49aea01804822c933, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10289,3 +10290,30 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.011
   m_Center: {x: -0.0000000023283064, y: -0.0000000018626451, z: 0}
+--- !u!114 &4121460231999176687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9222986034029131056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 049d4938a5eeaae4b91848cb540b9c17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 500
+  enemy: {fileID: 6546931274633200737, guid: 804db524a1e021040a4ecd76e027adf4, type: 3}
+  spawnRadius: 15
+  spawnAltitude: 30
+  spawnDelay: 2
+  waveDelay: 15
+  playerActivationDistance: 100
+  initialAmount: 1
+  maxAmount: 3
+  stepForIncrease: 0
+  maxAliveAmount: 3
+  explosion: {fileID: 8140520845754920705}
+  spawnFlash: {fileID: 5882607789324973336}
+  destroyTime: 0.2
+  score: 150
