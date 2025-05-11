@@ -5262,7 +5262,7 @@ MonoBehaviour:
     m_Bits: 8
   muzzleFlash: {fileID: 1848447827683875278}
   audioSource: {fileID: 2637946469327995977}
-  shotSound: {fileID: 8300000, guid: 0a274ba990e84c948a1aad202d6362e5, type: 3}
+  shotSound: {fileID: 8300000, guid: 2398256297e97f5459a6cbac478920a7, type: 3}
 --- !u!82 &2637946469327995977
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5275,7 +5275,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.125
   m_Pitch: 1
   Loop: 0
   Mute: 0

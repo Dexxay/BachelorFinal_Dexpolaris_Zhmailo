@@ -42,7 +42,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2533326454809807424}
   serializedVersion: 8
-  lengthInSec: 0.15
+  lengthInSec: 0.3
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -10317,6 +10317,8 @@ MonoBehaviour:
   explosion: {fileID: 8140520845754920705}
   spawnFlash: {fileID: 5882607789324973336}
   destroyTime: 0.2
+  audioSource: {fileID: 3014757875563071756}
+  spawnSound: {fileID: 8300000, guid: f92e3b9e4c6e173439d2bd4790e43b20, type: 3}
   score: 150
 --- !u!82 &3014757875563071756
 AudioSource:
@@ -10329,8 +10331,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.125
   m_Pitch: 1
   Loop: 0
   Mute: 0

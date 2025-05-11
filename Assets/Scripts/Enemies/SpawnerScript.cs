@@ -29,6 +29,8 @@ public class SpawnerScript : MonoBehaviour, IDamagable
     [SerializeField] private ParticleSystem explosion;
     [SerializeField] private ParticleSystem spawnFlash;
     [SerializeField] private float destroyTime = 0.1f;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip spawnSound;
 
     [Header("Score")]
     [SerializeField] private int score = 150;
@@ -98,6 +100,9 @@ public class SpawnerScript : MonoBehaviour, IDamagable
 
                     if (spawnFlash != null)
                         spawnFlash.Play();
+
+                    if (audioSource != null)
+                        audioSource.PlayOneShot(spawnSound);
 
                     yield return new WaitForSeconds(spawnDelay);
                 }
