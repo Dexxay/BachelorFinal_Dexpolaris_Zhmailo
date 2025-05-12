@@ -5253,7 +5253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   laserSpeed: 100
-  laserDamage: 10
+  laserDamage: 5
   accuracy: 2.5
   distanceTravelMultiplier: 2
   laserLinePrefab: {fileID: 8089527844294005958, guid: a14a4654386848c4ab755f41853a3a2b, type: 3}

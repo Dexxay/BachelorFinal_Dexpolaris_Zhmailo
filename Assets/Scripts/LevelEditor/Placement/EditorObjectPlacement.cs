@@ -118,6 +118,8 @@ public class EditorObjectPlacement : MonoBehaviour
 
         if (currentObjectToPlace != previousObjectToPlace)
         {
+            levelEditor.UiHandler.ClearMessage();
+
             if (currentObjectToPlace == 2)
             {
                 selectedRandomAsteroidPrefab = levelEditor.GetRandomAsteroidPrefab();
@@ -208,8 +210,21 @@ public class EditorObjectPlacement : MonoBehaviour
                         placedObjectRadius.CheckAndShowRadiusVisualization();
                     }
 
-                    if (currentObjectToPlace == 1) levelEditor.startAsteroidInstance = newObject;
-                    if (currentObjectToPlace == 0) levelEditor.finishAsteroidInstance = newObject;
+                    if (audioSource != null && setSound != null) audioSource.PlayOneShot(setSound);
+
+                    if (currentObjectToPlace == 1) 
+                    {
+                        levelEditor.startAsteroidInstance = newObject;
+                        levelEditor.UiHandler.ClearMessage();
+                        return;
+                    }
+
+                    if (currentObjectToPlace == 0)
+                    {
+                        levelEditor.finishAsteroidInstance = newObject;
+                        levelEditor.UiHandler.ClearMessage();
+                        return;
+                    }
 
                     if (currentObjectToPlace == 2)
                     {
@@ -217,7 +232,6 @@ public class EditorObjectPlacement : MonoBehaviour
                         currentPreviewRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
                     }
 
-                    if (audioSource != null && setSound != null) audioSource.PlayOneShot(setSound);
                 }
                 else
                 {

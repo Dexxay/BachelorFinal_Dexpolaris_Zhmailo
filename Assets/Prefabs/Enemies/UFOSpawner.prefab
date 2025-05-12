@@ -10262,9 +10262,14 @@ MonoBehaviour:
   radius: 4
   radiusColor: {r: 1, g: 0, b: 0.015686275, a: 1}
   radiusTransparency: 0.2
+  range: 100
+  rangeColor: {r: 0.31150115, g: 1, b: 0, a: 1}
+  rangeTransparency: 0.3
   planeHeightOffset: 0.1
   editorSceneName: LevelEditorTemplate
   editorPlaneTag: EditorPlane
+  rangeTextureSize: 512
+  radiusTextureSize: 128
 --- !u!114 &2273838575256645664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10320,6 +10325,7 @@ MonoBehaviour:
   audioSource: {fileID: 3014757875563071756}
   spawnSound: {fileID: 8300000, guid: f92e3b9e4c6e173439d2bd4790e43b20, type: 3}
   score: 150
+  objectRadius: {fileID: 536406818769850408}
 --- !u!82 &3014757875563071756
 AudioSource:
   m_ObjectHideFlags: 0

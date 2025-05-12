@@ -93,6 +93,7 @@
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamagable.cs" />
     <Compile Include="Assets\Scripts\Player\MouseMovement.cs" />
+    <Compile Include="Assets\Scripts\Enemies\UFOBehaviour.cs" />
     <Compile Include="Assets\Scripts\UI\HealthCount.cs" />
     <Compile Include="Assets\Scripts\Collectable\Collectable.cs" />
     <Compile Include="Assets\Scripts\Player\PickingUpScript.cs" />
@@ -104,7 +105,6 @@
     <Compile Include="Assets\Scripts\Player\PlayerFallDetector.cs" />
     <Compile Include="Assets\Scripts\MenuScripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
-    <Compile Include="Assets\Scripts\Enemies\UFOBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

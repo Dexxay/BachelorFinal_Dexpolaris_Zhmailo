@@ -87,7 +87,7 @@ public class EditorPlacementPreviewHandler : MonoBehaviour
                 ObjectRadius previewObjectRadius = placementPreviewInstance.GetComponent<ObjectRadius>();
                 if (previewObjectRadius != null)
                 {
-                    previewObjectRadius.ShowRadiusVisualization(!canPlace);
+                    previewObjectRadius.ShowRadiusVisualization(true);
                 }
 
             }
@@ -127,7 +127,7 @@ public class EditorPlacementPreviewHandler : MonoBehaviour
             ObjectRadius previewObjectRadius = placementPreviewInstance.GetComponent<ObjectRadius>();
             if (previewObjectRadius != null)
             {
-                previewObjectRadius.HideRadiusVisualization();
+                previewObjectRadius.HideVisualization();
             }
             DestroyImmediate(placementPreviewInstance);
             placementPreviewInstance = null;

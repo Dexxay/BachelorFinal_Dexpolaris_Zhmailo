@@ -330,10 +330,18 @@ public class LevelEditor : MonoBehaviour
         }
 
         ObjectRadius newObjectRadiusComponent = prefabToSpawn.GetComponent<ObjectRadius>();
-        float newObjectRadius = newObjectRadiusComponent != null ? newObjectRadiusComponent.radius : 1f;
+        float newObjectRadius = newObjectRadiusComponent != null ? newObjectRadiusComponent.Radius : 1f;
 
-        if (prefabToSpawn == startAsteroidPrefab && startAsteroidInstance != null && startAsteroidInstance != objectToIgnore) return false;
-        if (prefabToSpawn == finishAsteroidPrefab && finishAsteroidInstance != null && finishAsteroidInstance != objectToIgnore) return false;
+        if (prefabToSpawn == startAsteroidPrefab && startAsteroidInstance != null && startAsteroidInstance != objectToIgnore)
+        {
+            ShowMessage("There is a start asteroid on a map already. Delete old one to place a new one", true);
+            return false;
+        }
+        if (prefabToSpawn == finishAsteroidPrefab && finishAsteroidInstance != null && finishAsteroidInstance != objectToIgnore) 
+        {
+            ShowMessage("There is a finish asteroid on a map already. Delete old one to place a new one", true);
+            return false; 
+        }
 
         bool canPlace = true;
 
@@ -346,7 +354,7 @@ public class LevelEditor : MonoBehaviour
             {
                 float distanceXZ = Vector2.Distance(new Vector2(placementPosition.x, placementPosition.z), new Vector2(child.position.x, child.position.z));
 
-                if (distanceXZ < newObjectRadius + existingObjectRadiusComponent.radius)
+                if (distanceXZ < newObjectRadius + existingObjectRadiusComponent.Radius)
                 {
                     canPlace = false;
                     break;

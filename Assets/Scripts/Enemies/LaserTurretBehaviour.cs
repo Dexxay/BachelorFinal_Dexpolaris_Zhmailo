@@ -35,6 +35,9 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
     [SerializeField] private ParticleSystem explosion;
     [SerializeField] private float destroyTime = 0.1f;
 
+    [Header("Editor")]
+    [SerializeField] private ObjectRadius objectRadius;
+
     private MainPlayer player;
     private bool canAttack = true;
     private Coroutine attackRoutine;
@@ -58,6 +61,7 @@ public class LaserTurretBehaviour : MonoBehaviour, IEnemy
             Debug.LogError("FirePoint is not assigned on " + gameObject.name + "! Turret will not be able to shoot.");
         }
 
+        objectRadius.SetRange(attackRange);
 
         currentHealth = maxHealth;
     }

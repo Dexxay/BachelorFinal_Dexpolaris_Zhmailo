@@ -35,6 +35,9 @@ public class SpawnerScript : MonoBehaviour, IDamagable
     [Header("Score")]
     [SerializeField] private int score = 150;
 
+    [Header("Editor")]
+    [SerializeField] private ObjectRadius objectRadius;
+
     private MainPlayer player;
 
     private int currentEnemiesAmount;
@@ -57,6 +60,8 @@ public class SpawnerScript : MonoBehaviour, IDamagable
             canSpawn = false;
             return;
         }
+
+        objectRadius.SetRange(playerActivationDistance);
 
         currentEnemiesAmount = initialAmount;
         waveCount = 0;

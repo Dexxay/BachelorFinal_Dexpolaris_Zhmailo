@@ -159,6 +159,7 @@ MonoBehaviour:
   maxVerticalAngle: 45
   explosion: {fileID: 6502090649185419722}
   destroyTime: 0.1
+  objectRadius: {fileID: 3683320205538866889}
 --- !u!135 &7022209083305463894
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -297,9 +298,14 @@ MonoBehaviour:
   radius: 3
   radiusColor: {r: 1, g: 0, b: 0.015686275, a: 1}
   radiusTransparency: 0.2
+  range: 100
+  rangeColor: {r: 1, g: 0.33839023, b: 0, a: 1}
+  rangeTransparency: 0.3
   planeHeightOffset: 0.1
   editorSceneName: LevelEditorTemplate
   editorPlaneTag: EditorPlane
+  rangeTextureSize: 512
+  radiusTextureSize: 128
 --- !u!114 &-4257479626243284118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,7 +319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   laserSpeed: 150
-  laserDamage: 25
+  laserDamage: 10
   accuracy: 2.5
   distanceTravelMultiplier: 2
   laserLinePrefab: {fileID: 8089527844294005958, guid: b7f304f390a14c34a8778829861d5190, type: 3}
