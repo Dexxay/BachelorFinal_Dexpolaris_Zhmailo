@@ -69,11 +69,18 @@ public class EditorPlacementPreviewHandler : MonoBehaviour
                         col.enabled = false;
                     }
 
+
                     Rigidbody[] rigidbodies = placementPreviewInstance.GetComponentsInChildren<Rigidbody>();
                     foreach (Rigidbody rb in rigidbodies)
                     {
                         rb.isKinematic = true;
                         rb.detectCollisions = false;
+                    }
+
+                    MonoBehaviour[] scripts = placementPreviewInstance.GetComponentsInChildren<MonoBehaviour>();
+                    foreach (MonoBehaviour script in scripts)
+                    {
+                        script.enabled = false;
                     }
                 }
 

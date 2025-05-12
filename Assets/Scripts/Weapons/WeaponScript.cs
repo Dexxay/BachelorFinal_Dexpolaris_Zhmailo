@@ -116,7 +116,7 @@ public class WeaponScript : MonoBehaviour
             }
             else
             {
-                Vector3 position = rayHit.point + rayHit.normal * 0.005f;
+                Vector3 position = rayHit.point + rayHit.normal * 0.01f;
                 Quaternion rotation = Quaternion.LookRotation(rayHit.normal);
 
                 GameObject bulletHole = EffectsManager.Instance.SpawnBulletHole(position, rotation);

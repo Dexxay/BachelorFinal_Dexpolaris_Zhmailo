@@ -361,7 +361,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7953649203427449729, guid: fc03a8d3042dbc34b92d28878be6c618, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7953649203427449729, guid: fc03a8d3042dbc34b92d28878be6c618, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1753,25 +1753,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5970414698393492952, guid: e353865ca3d58e04590270e4d2ae39d8, type: 3}
   m_PrefabInstance: {fileID: 1580355899}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &743367605 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1872380648841105144, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-  m_PrefabInstance: {fileID: 1329400451}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &743367609
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 743367605}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3923832794788286368, guid: 78499d97230fe0748a3fc15499c77d48, type: 3}
 --- !u!1001 &747552377
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2051,7 +2032,7 @@ Transform:
   - {fileID: 115661373}
   - {fileID: 1502608623}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1032662273 stripped
 Transform:
@@ -2335,91 +2316,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d4ffb62c6d6ea04fb7f1d9eebbaa906, type: 3}
---- !u!1001 &1329400451
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1158873147682221676, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -2.099
-      objectReference: {fileID: 0}
-    - target: {fileID: 1158873147682221676, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -2.39
-      objectReference: {fileID: 0}
-    - target: {fileID: 1158873147682221676, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.275
-      objectReference: {fileID: 0}
-    - target: {fileID: 1615077527607850472, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_Name
-      value: asteroid_belt_group_SRP_01
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 132.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 6.471212
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -137.83583
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099302880287158098, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8697092506435514799, guid: d013c4364aab6b1439a0365bba950554, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.84555
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d013c4364aab6b1439a0365bba950554, type: 3}
 --- !u!4 &1343717929 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1516010924884865469, guid: 1effc4d008e68a54c89f09975149c81e, type: 3}
@@ -3981,7 +3877,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7681551623458128615, guid: e7030dbf28d16a247a67cf500dfd7474, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7681551623458128615, guid: e7030dbf28d16a247a67cf500dfd7474, type: 3}
       propertyPath: m_LocalPosition.x

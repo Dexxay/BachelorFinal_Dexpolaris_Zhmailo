@@ -206,6 +206,8 @@ public class EditorObjectPlacement : MonoBehaviour
                     if (objectInfo == null) objectInfo = newObject.AddComponent<PlacedObjectInfo>();
                     objectInfo.originalPrefabName = prefabToSpawn.name;
 
+                    currentPreviewRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+
                     ObjectRadius placedObjectRadius = newObject.GetComponent<ObjectRadius>();
                     if (placedObjectRadius != null)
                     {
@@ -231,7 +233,6 @@ public class EditorObjectPlacement : MonoBehaviour
                     if (currentObjectToPlace == 2)
                     {
                         selectedRandomAsteroidPrefab = levelEditor.GetRandomAsteroidPrefab();
-                        currentPreviewRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
                     }
 
                 }

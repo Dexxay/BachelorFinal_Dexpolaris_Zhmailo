@@ -122,7 +122,7 @@ MonoBehaviour:
   editorSceneName: LevelEditorTemplate
   editorPlaneTag: EditorPlane
   rangeTextureSize: 256
-  radiusTextureSize: 64
+  radiusTextureSize: 128
 --- !u!1 &8258160769409560663
 GameObject:
   m_ObjectHideFlags: 0

@@ -23,7 +23,6 @@ Material:
   m_Name: asteroids_ mat_SRP_01
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ValidKeywords:
-  - _METALLICGLOSSMAP
   - _NORMALMAP
   - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   m_InvalidKeywords:
@@ -67,7 +66,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: 25c071bdd3b8e9641bf6a2fac536b9ba, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -107,7 +106,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnvironmentReflections: 1
-    - _GlossMapScale: 0.5
+    - _GlossMapScale: 0.25
     - _Glossiness: 0.712
     - _GlossyReflections: 1
     - _Metallic: 0
@@ -128,5 +127,5 @@ Material:
     - _BaseColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.6792453, g: 0.6792453, b: 0.6792453, a: 1}
+    - _SpecColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
   m_BuildTextureStacks: []

@@ -250,4 +250,4 @@ MonoBehaviour:
   editorSceneName: LevelEditorTemplate
   editorPlaneTag: EditorPlane
   rangeTextureSize: 256
-  radiusTextureSize: 64
+  radiusTextureSize: 128

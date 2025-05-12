@@ -17,7 +17,7 @@ public class ObjectRadius : MonoBehaviour
 
  
     [SerializeField] private int rangeTextureSize = 256;
-    [SerializeField] private int radiusTextureSize = 64;  
+    [SerializeField] private int radiusTextureSize = 256;  
 
     private GameObject radiusSpriteInstance;
     private GameObject rangeSpriteInstance;

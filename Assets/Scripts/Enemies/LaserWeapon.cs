@@ -97,7 +97,7 @@ public class LaserWeapon : MonoBehaviour
             {
                 lr.SetPosition(1, hit.point);
 
-                Vector3 position = hit.point + hit.normal * 0.005f;
+                Vector3 position = hit.point + hit.normal * 0.01f;
                 Quaternion rotation = Quaternion.LookRotation(hit.normal);
 
                 if (EffectsManager.Instance != null) 
