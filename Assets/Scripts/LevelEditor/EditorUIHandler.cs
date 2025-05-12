@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections;
 using System;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;  
 
 public class EditorUIHandler : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class EditorUIHandler : MonoBehaviour
 
     [Header("Editor UI Elements")]
     [SerializeField] private TextMeshProUGUI selectedElementText;
+    [SerializeField] private List<Image> slotHighlights;
 
     private LevelEditor levelEditor;
     private Coroutine clearMessageCoroutine;
@@ -101,6 +103,8 @@ public class EditorUIHandler : MonoBehaviour
         {
             Debug.LogError("selectedElementText not assigned in EditorUIHandler!");
         }
+
+         UpdateSlotHighlight(levelEditor.GetComponent<EditorObjectPlacement>().CurrentObjectToPlace);
     }
 
     public void UpdateSelectedElementDisplay(string elementName)
@@ -108,6 +112,35 @@ public class EditorUIHandler : MonoBehaviour
         if (selectedElementText != null)
         {
             selectedElementText.text = elementName;
+        }
+    }
+
+     public void UpdateSlotHighlight(int activeSlotIndex)
+    {
+        float visibleTransparency = 0.9f;
+        float hiddenTransperency = 0.1f;
+        for (int i = 0; i < slotHighlights.Count; i++)
+        {
+            if (slotHighlights[i] != null)
+            {
+                int correspondingListIndex = (activeSlotIndex == 0) ? 9 : activeSlotIndex - 1;
+
+                Color targetColor = slotHighlights[i].color;
+
+                if (i == correspondingListIndex)
+                {
+                    targetColor.a = visibleTransparency;
+                }
+                else
+                {
+                    targetColor.a = hiddenTransperency;
+                }
+                slotHighlights[i].color = targetColor;
+            }
+            else
+            {
+                Debug.LogWarning($"Slot highlight element at index {i} is null in the list.");
+            }
         }
     }
 
@@ -231,7 +264,7 @@ public class EditorUIHandler : MonoBehaviour
 
     public void OnNoClicked()
     {
-        onConfirmAction = null; 
+        onConfirmAction = null;
         HideConfirmationDialog();
     }
 

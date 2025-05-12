@@ -59,6 +59,7 @@ public class EditorObjectPlacement : MonoBehaviour
         {
             string displayString = GetElementDisplayName(currentObjectToPlace);
             levelEditor.UiHandler.UpdateSelectedElementDisplay(displayString);
+            levelEditor.UiHandler.UpdateSlotHighlight(currentObjectToPlace);  
         }
         else
         {
@@ -119,6 +120,7 @@ public class EditorObjectPlacement : MonoBehaviour
         if (currentObjectToPlace != previousObjectToPlace)
         {
             levelEditor.UiHandler.ClearMessage();
+            levelEditor.UiHandler.UpdateSlotHighlight(currentObjectToPlace); 
 
             if (currentObjectToPlace == 2)
             {
@@ -212,7 +214,7 @@ public class EditorObjectPlacement : MonoBehaviour
 
                     if (audioSource != null && setSound != null) audioSource.PlayOneShot(setSound);
 
-                    if (currentObjectToPlace == 1) 
+                    if (currentObjectToPlace == 1)
                     {
                         levelEditor.startAsteroidInstance = newObject;
                         levelEditor.UiHandler.ClearMessage();
