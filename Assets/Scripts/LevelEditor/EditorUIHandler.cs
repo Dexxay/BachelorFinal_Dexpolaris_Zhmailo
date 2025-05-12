@@ -118,7 +118,7 @@ public class EditorUIHandler : MonoBehaviour
      public void UpdateSlotHighlight(int activeSlotIndex)
     {
         float visibleTransparency = 0.9f;
-        float hiddenTransperency = 0.1f;
+        float hiddenTransperency = 0.2f;
         for (int i = 0; i < slotHighlights.Count; i++)
         {
             if (slotHighlights[i] != null)

@@ -20,13 +20,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelEditorTemplate.unity
     guid: 46bdc326943bcc94299650298e369dcc
-  - enabled: 0
-    path: Assets/Scenes/SpaceTest.unity
-    guid: 3bf96274d3c70a44b9b6182ef2668dbb
-  - enabled: 0
-    path: Assets/Scenes/ChooseLevelMenu.unity
-    guid: e3f38ba573190b143bd377b19cdeaba7
-  - enabled: 0
-    path: Assets/Scenes/Snow Playground.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

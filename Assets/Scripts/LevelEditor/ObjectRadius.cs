@@ -1,4 +1,3 @@
-// Based on the user's provided code, applying specific texture size requirements and contour clarity.
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -113,7 +112,7 @@ public class ObjectRadius : MonoBehaviour
 
     public void CheckAndShowRadiusVisualization()
     {
-        bool show = Application.isEditor && SceneManager.GetActiveScene().name == editorSceneName;
+        bool show = SceneManager.GetActiveScene().name == editorSceneName;
         ShowRadiusVisualization(show);
     }
 
