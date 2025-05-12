@@ -10264,7 +10264,7 @@ MonoBehaviour:
   radiusTransparency: 0.2
   range: 100
   rangeColor: {r: 0.31150115, g: 1, b: 0, a: 1}
-  rangeTransparency: 0.3
+  rangeTransparency: 0.2
   planeHeightOffset: 0.1
   editorSceneName: LevelEditorTemplate
   editorPlaneTag: EditorPlane
