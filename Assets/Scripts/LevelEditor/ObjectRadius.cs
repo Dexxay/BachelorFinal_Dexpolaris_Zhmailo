@@ -16,8 +16,8 @@ public class ObjectRadius : MonoBehaviour
     [SerializeField] private string editorPlaneTag = "EditorPlane";
 
  
-    [SerializeField] private int rangeTextureSize = 512;
-    [SerializeField] private int radiusTextureSize = 128;  
+    [SerializeField] private int rangeTextureSize = 256;
+    [SerializeField] private int radiusTextureSize = 64;  
 
     private GameObject radiusSpriteInstance;
     private GameObject rangeSpriteInstance;
