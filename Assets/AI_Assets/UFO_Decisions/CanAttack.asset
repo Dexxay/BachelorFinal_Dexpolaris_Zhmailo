@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79e5415308faea643b1f5c075a715df7, type: 3}
+  m_Name: CanAttack
+  m_EditorClassIdentifier: 
+  canAttackNode: {fileID: 11400000, guid: eb6cf3c3aa6343b48aa93c5fb86fdd97, type: 2}
+  cannotAttackNode: {fileID: 11400000, guid: 862d68707e3f85d49883d424ffbefc0b, type: 2}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UFOBehaviour : MonoBehaviour, IEnemy
@@ -22,6 +23,12 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
 
     [Header("Detection Settings")]
     [SerializeField] private float playerDetectionRadius = 40f;
+    [SerializeField] private float playerLostDetectionRadiusFactor = 1.5f;
+
+    [Header("Patrolling Settings")]
+    [SerializeField] private float patrolRadius = 50f;
+    [SerializeField] private float patrolPointReachedDistance = 5f;
+    [SerializeField] private float patrolAltitude = 20f;
 
     [Header("Flocking Settings")]
     [SerializeField] private float flockDetectionRadius = 20f;
@@ -40,6 +47,7 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
     [SerializeField] private float circlingSpeedMultiplier = 0.8f;
     [SerializeField] private float circlingRadiusCorrectionWeight = 1.0f;
     [SerializeField] private float circlingTangentialWeight = 2.0f;
+    [SerializeField] private float circlingToApproachDistanceFactor = 1.3f;
 
     [Header("Attack Settings")]
     [SerializeField] private float attackRange = 50f;
@@ -52,28 +60,37 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
     [SerializeField] private int deathScoreValue = 100;
     [SerializeField] private float destructionDelay = 2f;
 
+    [Header("Decision Tree Settings")]
+    [SerializeField] private DecisionNode rootDecisionNode;
+    [SerializeField] private float decisionInterval = 0.25f;
+    [SerializeField] public bool enableDebugLogs = false;
+
     private int currentHealth;
     private Rigidbody rb;
     private MainPlayer mainPlayerTarget;
     private Transform playerTransform;
     private float lastAttackTime;
-    private Vector3 currentTargetPosition;
     private bool isDead = false;
     private Coroutine attackProcessCoroutine;
     private float instanceCirclingDistance;
     private float instanceRelativeAltitude;
     private float instanceMovementSpeed;
 
+    private Vector3 spawnPosition;
+    private Vector3 currentPatrolDestination;
+    private bool hasPatrolDestination;
 
-    private enum AIState
-    {
-        Idle,
-        ApproachingPlayer,
-        CirclingPlayer,
-        Attacking,
-        Dead
-    }
-    private AIState currentState = AIState.Idle;
+    private ActionNode currentAction = null; 
+    private Coroutine currentActionCoroutine = null; 
+
+    public Transform PlayerTransform => playerTransform;
+    public Coroutine AttackProcessCoroutine => attackProcessCoroutine;
+    public int CurrentHealth => currentHealth;
+    public float PlayerDetectionRadius => playerDetectionRadius;
+    public float CirclingDistance => instanceCirclingDistance;
+    public float CirclingToApproachDistanceFactor => circlingToApproachDistanceFactor;
+    public float AttackRange => attackRange;
+    public float PlayerLostDetectionRadiusFactor => playerLostDetectionRadiusFactor;
 
     public event Action<IEnemy> EnemyDied;
 
@@ -88,161 +105,157 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
         }
         rb.useGravity = false;
 
-        if (laserWeapon == null)
-        {
-            laserWeapon = GetComponentInChildren<LaserWeapon>();
-            if (laserWeapon == null)
-            {
-                Debug.LogError("LaserWeapon not assigned or found in children for UFO_AI on " + gameObject.name);
-            }
-        }
-        if (firePoint == null)
-        {
-            firePoint = laserWeapon != null ? laserWeapon.transform : transform;
-        }
+        if (laserWeapon == null) laserWeapon = GetComponentInChildren<LaserWeapon>();
+        if (laserWeapon == null) Debug.LogWarning("LaserWeapon component not found on " + gameObject.name + " or its children. UFO will not be able to attack.");
+
+        if (firePoint == null && laserWeapon != null) firePoint = laserWeapon.transform;
+        else if (firePoint == null) firePoint = transform;
+
         currentHealth = maxHealth;
+        spawnPosition = transform.position;
     }
 
     void Start()
     {
         mainPlayerTarget = FindFirstObjectByType<MainPlayer>();
-
         if (mainPlayerTarget != null)
         {
             playerTransform = mainPlayerTarget.transform;
+        }
 
-            instanceCirclingDistance = circlingDistance + UnityEngine.Random.Range(-circlingDistanceVariation, circlingDistanceVariation);
-            instanceCirclingDistance = Mathf.Max(1f, instanceCirclingDistance);
+        instanceCirclingDistance = circlingDistance + UnityEngine.Random.Range(-circlingDistanceVariation, circlingDistanceVariation);
+        instanceCirclingDistance = Mathf.Max(1f, instanceCirclingDistance);
+        instanceRelativeAltitude = relativeAltitude + UnityEngine.Random.Range(-relativeAltitudeVariation, relativeAltitudeVariation);
+        instanceRelativeAltitude = Mathf.Max(2f, instanceRelativeAltitude);
+        instanceMovementSpeed = movementSpeed + UnityEngine.Random.Range(-movementSpeedVariation, movementSpeedVariation);
+        instanceMovementSpeed = Mathf.Max(1f, instanceMovementSpeed);
 
-            instanceRelativeAltitude = relativeAltitude + UnityEngine.Random.Range(-relativeAltitudeVariation, relativeAltitudeVariation);
-            instanceRelativeAltitude = Mathf.Max(2f, instanceRelativeAltitude);
+        SetNewPatrolDestination();
 
-            instanceMovementSpeed = movementSpeed + UnityEngine.Random.Range(-movementSpeedVariation, movementSpeedVariation);
-            instanceMovementSpeed = Mathf.Max(1f, instanceMovementSpeed);
+        lastAttackTime = -attackCooldown; 
 
-            currentTargetPosition = GetInitialTargetPosition();
-            StartCoroutine(DecisionTreeCoroutine());
+        if (rootDecisionNode == null)
+        {
+            Debug.LogWarning($"Root Decision Node is NOT assigned for {gameObject.name}. " +
+                             $"AI will default to Patrol and will not use the Decision Tree.");
+            PatrolAction defaultPatrolAction = ScriptableObject.CreateInstance<PatrolAction>();
+            currentAction = defaultPatrolAction;
+            currentActionCoroutine = StartCoroutine(currentAction.Execute(this));
         }
         else
         {
-            Debug.LogError("Player with MainPlayer component not found in scene! UFO_AI on " + gameObject.name + " needs a player target. UFO will be disabled.");
-            currentState = AIState.Idle;
-            enabled = false;
-            return;
+            StartCoroutine(DecisionTreeCoroutine());
         }
-
-        lastAttackTime = -attackCooldown;
-    }
-
-    private Vector3 GetInitialTargetPosition()
-    {
-        if (playerTransform != null)
-        {
-            return playerTransform.position;
-        }
-        return transform.position;
     }
 
     private IEnumerator DecisionTreeCoroutine()
     {
-        while (!isDead)
+        if (rootDecisionNode == null)
         {
-            AIState nextState = DetermineNextState();
+            if (enableDebugLogs) Debug.LogError($"{gameObject.name}: DecisionTreeCoroutine stopping because rootDecisionNode is null.");
+            yield break;
+        }
 
-            if (nextState != currentState)
+        while (true)
+        {
+            if (isDead)
             {
-                if (currentState == AIState.Attacking && attackProcessCoroutine != null)
-                {
-                    StopCoroutine(attackProcessCoroutine);
-                    attackProcessCoroutine = null;
-                }
+                if (enableDebugLogs) Debug.Log($"{gameObject.name}: UFO is dead, stopping DecisionTreeCoroutine.");
+                yield break;
+            }
 
-                currentState = nextState;
-
-                if (currentState == AIState.Attacking && attackProcessCoroutine == null)
+            if (playerTransform == null && mainPlayerTarget == null)
+            {
+                mainPlayerTarget = FindFirstObjectByType<MainPlayer>();
+                if (mainPlayerTarget != null)
                 {
-                    attackProcessCoroutine = StartCoroutine(AttackCoroutine());
+                    playerTransform = mainPlayerTarget.transform;
                 }
             }
 
-            yield return null;
+            ActionNode nextAction = rootDecisionNode.MakeDecision(this);
+
+            if (nextAction == null)
+            {
+                if (enableDebugLogs) Debug.LogWarning($"{gameObject.name}: Decision Tree returned a NULL action. Sticking to current action or stopping.");
+            }
+            else if (nextAction != currentAction)
+            {
+                if (enableDebugLogs)
+                {
+                    Debug.Log($"{gameObject.name} state: {(currentAction != null ? currentAction.name : "None")} -> {nextAction.name}. " +
+                              $"PlayerDist: {(playerTransform ? Vector3.Distance(transform.position, playerTransform.position).ToString("F1") : "N/A")}, " +
+                              $"CanAttack: {CanAttack()}, Health: {currentHealth}");
+                }
+
+                if (currentActionCoroutine != null)
+                {
+                    StopCoroutine(currentActionCoroutine);
+                    currentActionCoroutine = null;
+                }
+
+                currentAction = nextAction;
+
+                currentActionCoroutine = StartCoroutine(currentAction.Execute(this));
+            }
+
+            if (currentAction is DieAction && !isDead)
+            {
+                Die();
+                yield break;
+            }
+
+            yield return new WaitForSeconds(decisionInterval); 
         }
     }
 
-    private AIState DetermineNextState()
+    public void SetNewPatrolDestination()
     {
-        if (isDead) return AIState.Dead;
-        if (playerTransform == null) return AIState.Idle;
+        if (isDead) return;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-        bool canAttack = CanAttack();
-
-        switch (currentState)
-        {
-            case AIState.Idle:
-                if (distanceToPlayer < playerDetectionRadius)
-                {
-                    return AIState.ApproachingPlayer;
-                }
-                return AIState.Idle;
-
-            case AIState.ApproachingPlayer:
-                if (distanceToPlayer <= instanceCirclingDistance * 1.1f)
-                {
-                    return AIState.CirclingPlayer;
-                }
-                if (distanceToPlayer > playerDetectionRadius * 1.5f)
-                {
-                    return AIState.Idle;
-                }
-                return AIState.ApproachingPlayer;
-
-            case AIState.CirclingPlayer:
-                if (canAttack)
-                {
-                    return AIState.Attacking;
-                }
-                if (distanceToPlayer > instanceCirclingDistance * 1.2f)
-                {
-                    return AIState.ApproachingPlayer;
-                }
-                return AIState.CirclingPlayer;
-
-            case AIState.Attacking:
-                return AIState.Attacking;
-
-            case AIState.Dead:
-                return AIState.Dead;
-        }
-
-        return AIState.Idle;
+        float randomAngle = UnityEngine.Random.Range(0f, 360f);
+        float randomDist = UnityEngine.Random.Range(patrolRadius * 0.3f, patrolRadius);
+        Vector3 offset = Quaternion.Euler(0, randomAngle, 0) * Vector3.forward * randomDist;
+        currentPatrolDestination = spawnPosition + offset;
+        currentPatrolDestination.y = spawnPosition.y + patrolAltitude; 
+        hasPatrolDestination = true;
     }
 
-    bool CanAttack()
+    public bool CanAttack()
     {
-        if (isDead || playerTransform == null) return false;
+        if (isDead || playerTransform == null || laserWeapon == null) return false;
         float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-        return distanceToPlayer <= attackRange && Time.time >= lastAttackTime + attackCooldown;
+        bool isInAttackRange = distanceToPlayer <= attackRange;
+        bool cooldownPassed = Time.time >= lastAttackTime + attackCooldown;
+        bool playerLost = distanceToPlayer > playerDetectionRadius * playerLostDetectionRadiusFactor;
+
+        return isInAttackRange && cooldownPassed && !playerLost;
     }
 
     void FixedUpdate()
     {
-        if (isDead || currentState == AIState.Attacking)
+        if (isDead)
         {
-            if (isDead) rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.fixedDeltaTime * 5f);
-            if (playerTransform == null && currentState != AIState.Attacking)
-            {
-                rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.fixedDeltaTime * 2f);
-            }
+            if (rb != null && rb.isKinematic == false)
+                rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.fixedDeltaTime * 5f);
             return;
         }
 
-        if (playerTransform == null)
+        if (currentAction == null)
         {
-            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.fixedDeltaTime * 2f);
+            if (rb != null)
+                rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.fixedDeltaTime * 5f);  
             return;
         }
 
+        if (currentAction is AttackAction)
+        {
+            if (rb != null)
+                rb.velocity = Vector3.Lerp(rb.velocity, rb.velocity * 0.5f, Time.fixedDeltaTime * 2f);
+            return;
+        }
+
+        if (currentAction is DieAction) return;
 
         HandleMovement();
         MaintainAltitude();
@@ -250,6 +263,8 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
 
     private void HandleMovement()
     {
+        if (rb == null) return;
+
         Vector3 baseMovementDirection = Vector3.zero;
         float currentSpeed = instanceMovementSpeed;
 
@@ -258,59 +273,78 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
         float activeAlignmentWeight = alignmentWeight;
         float activeCohesionWeight = cohesionWeight;
 
-
-        if (currentState == AIState.CirclingPlayer)
+        if (currentAction is CirclePlayerAction && playerTransform != null)
         {
             activeSeparationRadius = circlingSeparationRadius;
             activeSeparationWeight = circlingSeparationWeight;
             currentSpeed *= circlingSpeedMultiplier;
-        }
 
-        Vector3 flockingVector = CalculateFlockingVector(activeSeparationRadius, activeSeparationWeight, activeAlignmentWeight, activeCohesionWeight);
+            Vector3 playerToUfoHorizontal = transform.position - playerTransform.position;
+            playerToUfoHorizontal.y = 0;
 
-
-        if (playerTransform != null)
-        {
-            if (currentState == AIState.CirclingPlayer)
+            if (playerToUfoHorizontal.sqrMagnitude < 0.1f)
             {
-                Vector3 playerToUfoHorizontal = transform.position - playerTransform.position;
+                playerToUfoHorizontal = transform.right;
                 playerToUfoHorizontal.y = 0;
-
-                if (playerToUfoHorizontal.sqrMagnitude < 0.1f)
-                {
-                    playerToUfoHorizontal = Vector3.right;
-                }
+                if (playerToUfoHorizontal.sqrMagnitude < 0.1f) playerToUfoHorizontal = Vector3.right;
                 playerToUfoHorizontal.Normalize();
-
-                Vector3 desiredCircleHorizontalPos = playerTransform.position + playerToUfoHorizontal * instanceCirclingDistance;
-                Vector3 radiusCorrection = (desiredCircleHorizontalPos - transform.position);
-                radiusCorrection.y = 0;
-
-                Vector3 tangentialDirection = Vector3.Cross(Vector3.up, playerToUfoHorizontal);
-
-                baseMovementDirection = (radiusCorrection * circlingRadiusCorrectionWeight + tangentialDirection * circlingTangentialWeight);
-
             }
-            else if (currentState == AIState.ApproachingPlayer)
+            else
             {
-                Vector3 playerHorizontalPos = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
-                baseMovementDirection = (playerHorizontalPos - transform.position);
-                baseMovementDirection.y = 0;
+                playerToUfoHorizontal.Normalize();
             }
+
+            Vector3 desiredCircleHorizontalPos = playerTransform.position + playerToUfoHorizontal * instanceCirclingDistance;
+            Vector3 radiusCorrection = (desiredCircleHorizontalPos - transform.position);
+            radiusCorrection.y = 0;
+            Vector3 tangentialDirection = Vector3.Cross(Vector3.up, playerToUfoHorizontal);
+            baseMovementDirection = (radiusCorrection.normalized * circlingRadiusCorrectionWeight + tangentialDirection.normalized * circlingTangentialWeight);
+        }
+        else if (currentAction is ApproachPlayerAction && playerTransform != null)
+        {
+            Vector3 playerHorizontalPos = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
+            baseMovementDirection = (playerHorizontalPos - transform.position);
+        }
+        else if (currentAction is PatrolAction)
+        {
+            if (!hasPatrolDestination || Vector3.Distance(new Vector3(transform.position.x, currentPatrolDestination.y, transform.position.z), currentPatrolDestination) < patrolPointReachedDistance)
+            {
+                SetNewPatrolDestination();
+            }
+            baseMovementDirection = (currentPatrolDestination - transform.position);
+        }
+        else
+        {
+            rb.velocity = Vector3.Lerp(rb.velocity, new Vector3(0, rb.velocity.y, 0), Time.fixedDeltaTime * 2f);
+            return;  
         }
 
-        Vector3 combinedSteeringDirection = baseMovementDirection + flockingVector * instanceMovementSpeed * 0.5f;
+        baseMovementDirection.y = 0;
+        Vector3 flockingVector = CalculateFlockingVector(activeSeparationRadius, activeSeparationWeight, activeAlignmentWeight, activeCohesionWeight);
+        flockingVector.y = 0;
+
+        Vector3 combinedSteeringDirection = baseMovementDirection.normalized + flockingVector;
+        if (baseMovementDirection.sqrMagnitude < 0.01f) combinedSteeringDirection = flockingVector;
 
         Vector3 lookDirection = combinedSteeringDirection;
-        if (lookDirection.sqrMagnitude < 1e-6 && playerTransform != null && currentState != AIState.Idle)
+        if ((currentAction is ApproachPlayerAction || currentAction is CirclePlayerAction) && playerTransform != null)
         {
-            lookDirection = playerTransform.position - transform.position;
-            lookDirection.y = 0;
+            Vector3 directionToPlayer = playerTransform.position - transform.position;
+            directionToPlayer.y = 0;
+            if (directionToPlayer.sqrMagnitude > 0.01f) lookDirection = directionToPlayer;
+        }
+        else if (currentAction is PatrolAction)
+        {
+            if (combinedSteeringDirection.sqrMagnitude < 0.01f && hasPatrolDestination)
+            {
+                lookDirection = (currentPatrolDestination - transform.position);
+                lookDirection.y = 0;
+            }
         }
 
         if (lookDirection.sqrMagnitude > 1e-6)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(lookDirection.normalized);
             rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime));
         }
 
@@ -321,15 +355,10 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
         }
 
         Vector3 currentHorizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-        Vector3 newHorizontalVelocity = Vector3.Lerp(
-            currentHorizontalVelocity,
-            desiredHorizontalVelocity,
-            Time.fixedDeltaTime * horizontalMovementResponsiveness
-        );
-
+        Vector3 newHorizontalVelocity = Vector3.Lerp(currentHorizontalVelocity, desiredHorizontalVelocity, Time.fixedDeltaTime * horizontalMovementResponsiveness);
         rb.velocity = new Vector3(newHorizontalVelocity.x, rb.velocity.y, newHorizontalVelocity.z);
 
-        if (currentState == AIState.Idle || combinedSteeringDirection.sqrMagnitude < 1e-6)
+        if ((currentAction is PatrolAction && !hasPatrolDestination) || combinedSteeringDirection.sqrMagnitude < 1e-6)
         {
             rb.velocity = Vector3.Lerp(rb.velocity, new Vector3(0, rb.velocity.y, 0), Time.fixedDeltaTime * 2f);
         }
@@ -340,6 +369,7 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
         Vector3 separationSum = Vector3.zero;
         Vector3 alignmentSum = Vector3.zero;
         Vector3 cohesionSum = Vector3.zero;
+        int separationNeighborsCount = 0;
         int alignmentCohesionNeighborsCount = 0;
 
         float maxDetectionRadius = Mathf.Max(flockDetectionRadius, activeSeparationRadius);
@@ -348,142 +378,170 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.gameObject == gameObject) continue;
-
             UFOBehaviour otherUFO = hitCollider.GetComponent<UFOBehaviour>();
-            if (otherUFO != null && !otherUFO.isDead)
+            if (otherUFO != null && !otherUFO.isDead)  
             {
                 float distanceToNeighbor = Vector3.Distance(transform.position, hitCollider.transform.position);
-
                 if (distanceToNeighbor < activeSeparationRadius && distanceToNeighbor > 0.001f)
                 {
                     Vector3 separationDirection = (transform.position - hitCollider.transform.position).normalized;
-                    separationSum += separationDirection / distanceToNeighbor;
+                    separationSum += separationDirection / Mathf.Max(distanceToNeighbor, 0.1f);
+                    separationNeighborsCount++;
                 }
-
                 if (distanceToNeighbor < flockDetectionRadius)
                 {
-                    alignmentSum += hitCollider.transform.forward;
+                    alignmentSum += otherUFO.transform.forward;
                     cohesionSum += hitCollider.transform.position;
                     alignmentCohesionNeighborsCount++;
                 }
             }
         }
-
-        Vector3 finalSeparation = separationSum * activeSeparationWeight;
+        Vector3 finalSeparation = (separationNeighborsCount > 0 ? (separationSum / separationNeighborsCount) : Vector3.zero) * activeSeparationWeight;
         Vector3 finalAlignment = (alignmentCohesionNeighborsCount > 0 ? (alignmentSum / alignmentCohesionNeighborsCount).normalized : Vector3.zero) * activeAlignmentWeight;
         Vector3 finalCohesion = (alignmentCohesionNeighborsCount > 0 ? ((cohesionSum / alignmentCohesionNeighborsCount) - transform.position).normalized : Vector3.zero) * activeCohesionWeight;
-
         return finalSeparation + finalAlignment + finalCohesion;
     }
 
     private void MaintainAltitude()
     {
-        if (playerTransform == null) return;
+        if (rb == null) return;
 
-        float targetY = playerTransform.position.y + instanceRelativeAltitude;
-
+        float targetY;
+        if (currentAction is PatrolAction || playerTransform == null)
+        {
+            targetY = spawnPosition.y + patrolAltitude;
+        }
+        else
+        {
+            targetY = playerTransform.position.y + instanceRelativeAltitude;
+        }
         float altitudeError = targetY - transform.position.y;
-
         float desiredVerticalVelocity = altitudeError * altitudeCorrectionForce;
-
-        float verticalVelocityLimit = instanceMovementSpeed * 1.5f;
+        float verticalVelocityLimit = instanceMovementSpeed * 0.75f;
         desiredVerticalVelocity = Mathf.Clamp(desiredVerticalVelocity, -verticalVelocityLimit, verticalVelocityLimit);
-
         float newYVelocity = Mathf.Lerp(rb.velocity.y, desiredVerticalVelocity, Time.fixedDeltaTime * altitudeResponsiveness);
-
         rb.velocity = new Vector3(rb.velocity.x, newYVelocity, rb.velocity.z);
+    }
+
+    public void StartAttackCoroutine()
+    {
+        if (isDead || playerTransform == null || laserWeapon == null || mainPlayerTarget == null)
+        {
+            if (enableDebugLogs) Debug.LogWarning($"{gameObject.name}: Cannot start attack coroutine due to missing dependencies or being dead.");
+            attackProcessCoroutine = null; 
+            return;
+        }
+
+        if (attackProcessCoroutine != null)
+        {
+            StopCoroutine(attackProcessCoroutine);
+        }
+        attackProcessCoroutine = StartCoroutine(AttackCoroutine());
     }
 
     public IEnumerator AttackCoroutine()
     {
         if (isDead || laserWeapon == null || playerTransform == null || mainPlayerTarget == null)
         {
-            currentState = AIState.CirclingPlayer;
+            if (enableDebugLogs) Debug.LogWarning($"{gameObject.name}: AttackCoroutine: Prerequisites not met, ending coroutine.");
             attackProcessCoroutine = null;
             yield break;
         }
 
-        rb.velocity *= 0.5f;
-
-        Vector3 predictedTargetPos = playerTransform.position;
-        Rigidbody playerRb = playerTransform.GetComponent<Rigidbody>();
-        if (playerRb != null)
-        {
-            float distance = Vector3.Distance(firePoint.position, playerTransform.position);
-            float laserSpeed = laserWeapon != null ? laserWeapon.laserSpeed : 100f;
-            float laserTravelTime = distance / laserSpeed;
-            predictedTargetPos += playerRb.velocity * laserTravelTime * aimAheadFactor;
-        }
-
-        Quaternion initialRotation = transform.rotation;
-        Quaternion targetLookRotation = Quaternion.LookRotation(predictedTargetPos - firePoint.position);
-
+        Vector3 predictedTargetPos;
         float timeElapsed = 0f;
+
         while (timeElapsed < aimingTime)
         {
             if (isDead || playerTransform == null)
             {
-                currentState = AIState.CirclingPlayer;
+                if (enableDebugLogs) Debug.Log($"{gameObject.name}: AttackCoroutine: Player lost or UFO died during aiming.");
                 attackProcessCoroutine = null;
                 yield break;
             }
+
             predictedTargetPos = playerTransform.position;
-            if (playerRb != null)
+            if (mainPlayerTarget.TryGetComponent<Rigidbody>(out Rigidbody pRb))
             {
                 float distance = Vector3.Distance(firePoint.position, playerTransform.position);
-                float laserSpeed = laserWeapon != null ? laserWeapon.laserSpeed : 100f;
-                float laserTravelTime = distance / laserSpeed;
-                predictedTargetPos += playerRb.velocity * laserTravelTime * aimAheadFactor;
+                float laserSpeedVal = laserWeapon != null ? laserWeapon.laserSpeed : 100f;
+                if (laserSpeedVal <= 0) laserSpeedVal = 100f;
+                float laserTravelTime = distance / laserSpeedVal;
+                predictedTargetPos += pRb.velocity * laserTravelTime * aimAheadFactor;
             }
-            targetLookRotation = Quaternion.LookRotation(predictedTargetPos - firePoint.position);
+            predictedTargetPos.y += 0.5f;
 
-            transform.rotation = Quaternion.Slerp(initialRotation, targetLookRotation, timeElapsed / aimingTime);
+            if ((predictedTargetPos - firePoint.position).sqrMagnitude > 0.01f)
+            {
+                Quaternion targetLookRotation = Quaternion.LookRotation((predictedTargetPos - firePoint.position).normalized);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetLookRotation, Time.deltaTime * rotationSpeed * 2f);
+            }
             timeElapsed += Time.deltaTime;
             yield return null;
         }
-        transform.rotation = targetLookRotation;
+
+        predictedTargetPos = playerTransform.position;
+        if (mainPlayerTarget.TryGetComponent<Rigidbody>(out Rigidbody pRbFinal))
+        {
+            float distance = Vector3.Distance(firePoint.position, playerTransform.position);
+            float laserSpeedVal = laserWeapon != null ? laserWeapon.laserSpeed : 100f;
+            if (laserSpeedVal <= 0) laserSpeedVal = 100f;
+            float laserTravelTime = distance / laserSpeedVal;
+            predictedTargetPos += pRbFinal.velocity * laserTravelTime * aimAheadFactor;
+        }
+        predictedTargetPos.y += 0.5f;
+        if ((predictedTargetPos - firePoint.position).sqrMagnitude > 0.01f)
+        {
+            transform.rotation = Quaternion.LookRotation((predictedTargetPos - firePoint.position).normalized);
+        }
 
         if (laserWeapon != null)
         {
             laserWeapon.FireLaser(firePoint.position, predictedTargetPos, mainPlayerTarget);
             lastAttackTime = Time.time;
         }
-
-
-        currentState = AIState.CirclingPlayer;
-        attackProcessCoroutine = null;
+        else
+        {
+            if (enableDebugLogs) Debug.LogWarning($"{gameObject.name}: LaserWeapon is null, cannot fire.");
+        }
+        attackProcessCoroutine = null;  
     }
 
-    public void HitPlayer()
-    {
-        Debug.Log("UFO_AI: HitPlayer called (damage should be applied by LaserWeapon or specific collision).");
-    }
+    public void HitPlayer() {  }
 
     public void TakeDamage(int amount)
     {
         if (isDead || amount <= 0) return;
-
         currentHealth -= amount;
-        Debug.Log(gameObject.name + " took " + amount + " damage. Current Health: " + currentHealth);
+        if (enableDebugLogs) Debug.Log($"{gameObject.name} took {amount} damage. Current Health: {currentHealth}");
+
         if (currentHealth <= 0)
         {
-            Die();
+
         }
     }
 
     public void Die()
     {
         if (isDead) return;
-
         isDead = true;
-        currentHealth = 0;
-        currentState = AIState.Dead;
-        Debug.Log(gameObject.name + " has died.");
+
+        if (enableDebugLogs) Debug.Log($"{gameObject.name} is Die() method called. Initiating destruction.");
+
+        if (attackProcessCoroutine != null)
+        {
+            StopCoroutine(attackProcessCoroutine);
+            attackProcessCoroutine = null;
+        }
+        if (currentActionCoroutine != null)
+        {
+            StopCoroutine(currentActionCoroutine);
+            currentActionCoroutine = null;
+        }
 
         StopAllCoroutines();
-        attackProcessCoroutine = null;
 
-        if (explosionEffect != null)
+        if(explosionEffect != null)
         {
             explosionEffect.Play();
         }
@@ -497,34 +555,17 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
         {
             mainPlayerTarget.ScoreManager.AddScore(deathScoreValue);
         }
-        else
-        {
-            Debug.LogWarning("Cannot add score for " + gameObject.name + ": MainPlayer or MainPlayer.ScoreManager is null.");
-        }
-
         EnemyDied?.Invoke(this);
 
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
-        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        if (meshRenderer != null) meshRenderer.enabled = false;
-        foreach (var rend in GetComponentsInChildren<MeshRenderer>())
-        {
-            if (rend != meshRenderer) rend.enabled = false;
-        }
-        foreach (var ps in GetComponentsInChildren<ParticleSystem>())
-        {
-            if (ps != explosionEffect) ps.Stop();
-        }
-
 
         if (rb != null)
         {
-            rb.isKinematic = true;
+            rb.isKinematic = true; 
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
-
-        Destroy(gameObject, destructionDelay);
+        Destroy(gameObject, destructionDelay); 
     }
 }

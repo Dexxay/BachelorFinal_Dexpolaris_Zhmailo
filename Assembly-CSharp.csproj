@@ -105,6 +105,17 @@
     <Compile Include="Assets\Scripts\Player\PlayerFallDetector.cs" />
     <Compile Include="Assets\Scripts\MenuScripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Results.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\DecisionNode.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\ActionNode.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Actions\PatrolAction.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Actions\ApproachPlayerAction.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Actions\CirclePlayerAction.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Actions\AttackAction.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Actions\DieAction.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Decisions\IsDeadDecision.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Decisions\HasPlayerTargetDecision.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Decisions\PlayerInRangeDecision.cs" />
+    <Compile Include="Assets\Scripts\DecisionTree\Decisions\CanAttackDecision.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
