@@ -10346,7 +10346,7 @@ MonoBehaviour:
   radius: 4
   radiusColor: {r: 1, g: 0, b: 0.015686275, a: 1}
   radiusTransparency: 0.2
-  range: 100
+  range: 150
   rangeColor: {r: 0.31150115, g: 1, b: 0, a: 1}
   rangeTransparency: 0.2
   planeHeightOffset: 0.1
@@ -10398,7 +10398,7 @@ MonoBehaviour:
   spawnAltitude: 30
   spawnDelay: 2
   waveDelay: 15
-  playerActivationDistance: 100
+  playerActivationDistance: 150
   initialAmount: 1
   maxAmount: 3
   stepForIncrease: 0

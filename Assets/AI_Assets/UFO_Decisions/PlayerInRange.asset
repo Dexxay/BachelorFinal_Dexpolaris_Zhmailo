@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f834fcfdac2fa6d47bf69c74e30f809a, type: 3}
   m_Name: PlayerInRange
   m_EditorClassIdentifier: 
-  range: 40
   inRangeNode: {fileID: 11400000, guid: df72b7e603fd9884984dd1ff8c9895c7, type: 2}
   outOfRangeNode: {fileID: 11400000, guid: 4d5fa686cc1a93741b7d7549239fe08b, type: 2}

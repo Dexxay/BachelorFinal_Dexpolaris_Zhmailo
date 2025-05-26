@@ -5210,7 +5210,7 @@ MonoBehaviour:
   laserWeapon: {fileID: 9018608889159662537}
   firePoint: {fileID: 7303826154844363654}
   explosionEffect: {fileID: 7247978989016871605}
-  movementSpeed: 50
+  movementSpeed: 40
   movementSpeedVariation: 3
   rotationSpeed: 3
   relativeAltitude: 15
@@ -5218,10 +5218,10 @@ MonoBehaviour:
   altitudeCorrectionForce: 3
   altitudeResponsiveness: 3
   horizontalMovementResponsiveness: 5
-  playerDetectionRadius: 125
+  playerDetectionRadius: 100
   playerLostDetectionRadiusFactor: 1.5
   patrolRadius: 50
-  patrolPointReachedDistance: 5
+  patrolPointReachedDistance: 10
   patrolAltitude: 15
   flockDetectionRadius: 30
   separationWeight: 3

@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2eb82f1cde5d444aec9d779bf736e1, type: 3}
-  m_Name: HasTarget
+  m_Script: {fileID: 11500000, guid: 8b88f9bfa35b37644ab4158513617186, type: 3}
+  m_Name: IsDetected
   m_EditorClassIdentifier: 
-  trueNode: {fileID: 11400000, guid: 1e56ad8962a55144b9175ddc462efa54, type: 2}
-  falseNode: {fileID: 11400000, guid: 0c4820d1a1acfc847abd7627eff89d1a, type: 2}
+  inRangeNode: {fileID: 11400000, guid: 0a3503b4be7ee434190c09cb11887ac0, type: 2}
+  outOfRangeNode: {fileID: 11400000, guid: 0c4820d1a1acfc847abd7627eff89d1a, type: 2}
