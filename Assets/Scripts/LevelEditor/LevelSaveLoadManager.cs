@@ -1,8 +1,8 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System;
+using UnityEngine;
 
 [System.Serializable]
 public struct SerializableVector3
@@ -171,7 +171,7 @@ public class LevelSaveLoadManager : MonoBehaviour
                     ObjectRadius placedObjectRadius = newObject.GetComponent<ObjectRadius>();
                     if (placedObjectRadius != null)
                     {
-                         placedObjectRadius.CheckAndShowRadiusVisualization();
+                        placedObjectRadius.CheckAndShowRadiusVisualization();
                     }
                 }
                 else

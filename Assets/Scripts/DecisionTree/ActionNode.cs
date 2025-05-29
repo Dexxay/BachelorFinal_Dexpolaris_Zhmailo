@@ -1,7 +1,7 @@
+using System.Collections;
 using UnityEngine;
-using System.Collections;  
 
- public abstract class ActionNode : ScriptableObject
+public abstract class ActionNode : ScriptableObject
 {
-     public abstract IEnumerator Execute(UFOBehaviour ufo);
+    public abstract IEnumerator Execute(UFOBehaviour ufo);
 }

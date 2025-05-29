@@ -1,7 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-using TMPro;
-using UnityEngine.SceneManagement;
 
 public class EditorObjectPlacement : MonoBehaviour
 {
@@ -59,7 +56,7 @@ public class EditorObjectPlacement : MonoBehaviour
         {
             string displayString = GetElementDisplayName(currentObjectToPlace);
             levelEditor.UiHandler.UpdateSelectedElementDisplay(displayString);
-            levelEditor.UiHandler.UpdateSlotHighlight(currentObjectToPlace);  
+            levelEditor.UiHandler.UpdateSlotHighlight(currentObjectToPlace);
         }
         else
         {
@@ -120,7 +117,7 @@ public class EditorObjectPlacement : MonoBehaviour
         if (currentObjectToPlace != previousObjectToPlace)
         {
             levelEditor.UiHandler.ClearMessage();
-            levelEditor.UiHandler.UpdateSlotHighlight(currentObjectToPlace); 
+            levelEditor.UiHandler.UpdateSlotHighlight(currentObjectToPlace);
 
             if (currentObjectToPlace == 2)
             {

@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "AI/UFO/Actions/Attack")]
 public class AttackAction : ActionNode

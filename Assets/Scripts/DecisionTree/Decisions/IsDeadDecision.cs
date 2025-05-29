@@ -3,8 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "AI/UFO/Decisions/Is Dead")]
 public class IsDeadDecision : DecisionNode
 {
-    public ActionNode deadNode;       
-    public DecisionNode notDeadNode;  
+    public ActionNode deadNode;
+    public DecisionNode notDeadNode;
 
     public override ActionNode MakeDecision(UFOBehaviour ufo)
     {
@@ -14,7 +14,7 @@ public class IsDeadDecision : DecisionNode
         }
         else
         {
-            return notDeadNode.MakeDecision(ufo);  
+            return notDeadNode.MakeDecision(ufo);
         }
     }
 }

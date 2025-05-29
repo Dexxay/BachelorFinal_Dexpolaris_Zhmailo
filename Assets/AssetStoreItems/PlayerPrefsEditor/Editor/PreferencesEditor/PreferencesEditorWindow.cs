@@ -1,13 +1,13 @@
-﻿using UnityEngine;
+﻿using BgTools.Dialogs;
+using BgTools.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEditorInternal;
-using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using BgTools.Utils;
-using BgTools.Dialogs;
+using UnityEngine;
 
 #if (UNITY_EDITOR_LINUX || UNITY_EDITOR_OSX)
 using System.Text;
@@ -18,7 +18,7 @@ namespace BgTools.PlayerPrefsEditor
 {
     public class PreferencesEditorWindow : EditorWindow
     {
-#region ErrorValues
+        #region ErrorValues
         private readonly int ERROR_VALUE_INT = int.MinValue;
         private readonly string ERROR_VALUE_STR = "<bgTool_error_24072017>";
         #endregion //ErrorValues
@@ -102,10 +102,10 @@ namespace BgTools.PlayerPrefsEditor
             entryAccessor.PrefEntryChangedDelegate = () => { updateView = true; };
 
             monitoring = EditorPrefs.GetBool("BGTools.PlayerPrefsEditor.WatchingForChanges", true);
-            if(monitoring)
+            if (monitoring)
                 entryAccessor.StartMonitoring();
 
-            sortOrder = (PreferencesEntrySortOrder) EditorPrefs.GetInt("BGTools.PlayerPrefsEditor.SortOrder", 0);
+            sortOrder = (PreferencesEntrySortOrder)EditorPrefs.GetInt("BGTools.PlayerPrefsEditor.SortOrder", 0);
             searchfield = new MySearchField();
             searchfield.DropdownSelectionDelegate = () => { PrepareData(); };
 
@@ -263,7 +263,8 @@ namespace BgTools.PlayerPrefsEditor
                 {
                     menu.AddItem(new GUIContent(type.ToString()), false, () =>
                     {
-                        TextFieldDialog.OpenDialog("Create new property", "Key for the new property:", prefKeyValidatorList, (key) => {
+                        TextFieldDialog.OpenDialog("Create new property", "Key for the new property:", prefKeyValidatorList, (key) =>
+                        {
 
                             entryAccessor.IgnoreNextChange();
 
@@ -361,9 +362,9 @@ namespace BgTools.PlayerPrefsEditor
             {
                 moveSplitterPos = true;
             }
-            if(moveSplitterPos)
+            if (moveSplitterPos)
             {
-                if (Event.current.mousePosition.x > 100 && Event.current.mousePosition.x<rect.width - 120)
+                if (Event.current.mousePosition.x > 100 && Event.current.mousePosition.x < rect.width - 120)
                 {
                     relSpliterPos = Event.current.mousePosition.x / rect.width;
                     Repaint();
@@ -424,13 +425,13 @@ namespace BgTools.PlayerPrefsEditor
 
                 if (GUILayout.Button(sortOrderContent, EditorStyles.toolbarButton))
                 {
-                    
+
                     sortOrder++;
-                    if((int) sortOrder >= Enum.GetValues(typeof(PreferencesEntrySortOrder)).Length)
+                    if ((int)sortOrder >= Enum.GetValues(typeof(PreferencesEntrySortOrder)).Length)
                     {
                         sortOrder = 0;
                     }
-                    EditorPrefs.SetInt("BGTools.PlayerPrefsEditor.SortOrder", (int) sortOrder);
+                    EditorPrefs.SetInt("BGTools.PlayerPrefsEditor.SortOrder", (int)sortOrder);
                     PrepareData(false);
                 }
 
@@ -576,7 +577,7 @@ namespace BgTools.PlayerPrefsEditor
                 listDest = listDest.Where((preferenceEntry) => preferenceEntry.ValueAsString().ToLower().Contains(searchTxt.ToLower())).ToList<PreferenceEntry>();
             }
 
-            switch(sortOrder)
+            switch (sortOrder)
             {
                 case PreferencesEntrySortOrder.Asscending:
                     listDest.Sort((PreferenceEntry x, PreferenceEntry y) => { return x.m_key.CompareTo(y.m_key); });
@@ -595,8 +596,8 @@ namespace BgTools.PlayerPrefsEditor
 
             // Seperate keys int unity defined and user defined
             Dictionary<bool, List<string>> groups = keys
-                .GroupBy( (key) => key.StartsWith("unity.") || key.StartsWith("UnityGraphicsQuality") )
-                .ToDictionary( (g) => g.Key, (g) => g.ToList() );
+                .GroupBy((key) => key.StartsWith("unity.") || key.StartsWith("UnityGraphicsQuality"))
+                .ToDictionary((g) => g.Key, (g) => g.ToList());
 
             unityDef = (groups.ContainsKey(true)) ? groups[true].ToArray() : new string[0];
             userDef = (groups.ContainsKey(false)) ? groups[false].ToArray() : new string[0];
@@ -663,12 +664,12 @@ public class MySearchField : SearchField
         {
             void OnDropdownSelection(object parameter)
             {
-                SearchMode = (SearchModePreferencesEditorWindow) Enum.Parse(typeof(SearchModePreferencesEditorWindow), parameter.ToString());
+                SearchMode = (SearchModePreferencesEditorWindow)Enum.Parse(typeof(SearchModePreferencesEditorWindow), parameter.ToString());
                 DropdownSelectionDelegate();
             }
 
             GenericMenu menu = new GenericMenu();
-            foreach(SearchModePreferencesEditorWindow EnumIt in Enum.GetValues(typeof(SearchModePreferencesEditorWindow)))
+            foreach (SearchModePreferencesEditorWindow EnumIt in Enum.GetValues(typeof(SearchModePreferencesEditorWindow)))
             {
                 String EnumName = Enum.GetName(typeof(SearchModePreferencesEditorWindow), EnumIt);
                 menu.AddItem(new GUIContent(EnumName), SearchMode == EnumIt, OnDropdownSelection, EnumName);

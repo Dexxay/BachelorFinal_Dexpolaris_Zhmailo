@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class UFOBehaviour : MonoBehaviour, IEnemy
@@ -537,7 +535,7 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
         }
 
         Vector3 finalPredictedTargetPos = PredictTargetPosition(playerTransform, mainPlayerTarget.GetComponent<Rigidbody>(), aimAheadFactor);
-        AimAtPosition(finalPredictedTargetPos); 
+        AimAtPosition(finalPredictedTargetPos);
 
         FireWeapon(finalPredictedTargetPos);
     }
@@ -591,7 +589,7 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
 
         if (currentHealth <= 0)
         {
-            Die();  
+            Die();
         }
     }
 
@@ -620,7 +618,7 @@ public class UFOBehaviour : MonoBehaviour, IEnemy
             StopCoroutine(currentActionCoroutine);
             currentActionCoroutine = null;
         }
-        StopAllCoroutines();  
+        StopAllCoroutines();
     }
 
     private void PerformDeathEffects()

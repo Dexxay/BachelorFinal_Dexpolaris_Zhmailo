@@ -7,12 +7,13 @@ namespace BgTools.Utils
     public class Styles
     {
         #region Colors
-        public class Colors {
-            public static Color DarkGray =  new Color(0.09f, 0.09f, 0.09f);
+        public class Colors
+        {
+            public static Color DarkGray = new Color(0.09f, 0.09f, 0.09f);
             public static Color LightGray = new Color(0.65f, 0.65f, 0.65f);
-            public static Color Red =       new Color(1.00f, 0.00f, 0.00f);
-            public static Color Yellow =    new Color(1.00f, 1.00f, 0.00f);
-            public static Color Blue =      new Color(0.00f, 0.63f, 0.99f);
+            public static Color Red = new Color(1.00f, 0.00f, 0.00f);
+            public static Color Yellow = new Color(1.00f, 1.00f, 0.00f);
+            public static Color Blue = new Color(0.00f, 0.63f, 0.99f);
         }
         #endregion // Colors
 

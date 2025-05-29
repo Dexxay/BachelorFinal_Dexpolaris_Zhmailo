@@ -1,10 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections;
-using System;
-using UnityEngine.SceneManagement;
-using System.Collections.Generic;  
 
 public class EditorUIHandler : MonoBehaviour
 {
@@ -104,7 +103,7 @@ public class EditorUIHandler : MonoBehaviour
             Debug.LogError("selectedElementText not assigned in EditorUIHandler!");
         }
 
-         UpdateSlotHighlight(levelEditor.GetComponent<EditorObjectPlacement>().CurrentObjectToPlace);
+        UpdateSlotHighlight(levelEditor.GetComponent<EditorObjectPlacement>().CurrentObjectToPlace);
     }
 
     public void UpdateSelectedElementDisplay(string elementName)
@@ -115,7 +114,7 @@ public class EditorUIHandler : MonoBehaviour
         }
     }
 
-     public void UpdateSlotHighlight(int activeSlotIndex)
+    public void UpdateSlotHighlight(int activeSlotIndex)
     {
         float visibleTransparency = 0.9f;
         float hiddenTransperency = 0.2f;
@@ -272,7 +271,8 @@ public class EditorUIHandler : MonoBehaviour
     {
         if (levelEditor == null) return;
         ShowConfirmationDialog("Return to main menu?\nUnsaved changes will be lost.",
-            () => {
+            () =>
+            {
                 levelEditor.GoToMainMenuConfirmed();
             });
     }
@@ -281,7 +281,8 @@ public class EditorUIHandler : MonoBehaviour
     {
         if (levelEditor == null) return;
         ShowConfirmationDialog($"Save level to slot {slot}?",
-            () => {
+            () =>
+            {
                 levelEditor.SaveLevelConfirmed(slot);
             });
     }
@@ -290,7 +291,8 @@ public class EditorUIHandler : MonoBehaviour
     {
         if (levelEditor == null) return;
         ShowConfirmationDialog($"Load level from slot {slot}?\nUnsaved changes in the current level will be lost.",
-           () => {
+           () =>
+           {
                levelEditor.LoadLevelConfirmed(slot);
            });
     }
@@ -299,7 +301,8 @@ public class EditorUIHandler : MonoBehaviour
     {
         if (levelEditor == null) return;
         ShowConfirmationDialog($"Delete level in slot {slot}?",
-            () => {
+            () =>
+            {
                 levelEditor.DeleteLevelConfirmed(slot);
             });
     }
@@ -309,7 +312,8 @@ public class EditorUIHandler : MonoBehaviour
     {
         if (levelEditor == null) return;
         ShowConfirmationDialog("Clear all objects on the level?",
-            () => {
+            () =>
+            {
                 levelEditor.ClearAllObjectsConfirmed();
             });
     }

@@ -93,7 +93,7 @@ namespace BgTools.Utils
         {
             get
             {
-                if(spinWheelIcons == null)
+                if (spinWheelIcons == null)
                 {
                     spinWheelIcons = new GUIContent[12];
                     for (int i = 0; i < 12; i++)
@@ -134,7 +134,7 @@ namespace BgTools.Utils
         {
             get
             {
-                if(exclamation == null)
+                if (exclamation == null)
                 {
                     exclamation = (Texture2D)AssetDatabase.LoadAssetAtPath(GetAssetDir() + "exclamation.png", typeof(Texture2D));
                 }
@@ -160,7 +160,7 @@ namespace BgTools.Utils
         {
             get
             {
-                if(watching == null)
+                if (watching == null)
                 {
                     watching = (Texture2D)AssetDatabase.LoadAssetAtPath(GetAssetDir() + "watching.png", typeof(Texture2D));
                 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,7 +42,7 @@ public class LaserWeapon : MonoBehaviour
 
         GameObject laserGO = new GameObject("LaserBeam");
 
-        LineRenderer lr = Instantiate(laserLinePrefab, laserGO.transform); 
+        LineRenderer lr = Instantiate(laserLinePrefab, laserGO.transform);
         lr.positionCount = 2;
         lr.SetPosition(0, startPosition);
         lr.SetPosition(1, startPosition);
@@ -72,7 +71,7 @@ public class LaserWeapon : MonoBehaviour
         {
             if (laserGO == null || lr == null)
             {
-                yield break; 
+                yield break;
             }
 
             elapsed += Time.deltaTime;
@@ -100,7 +99,7 @@ public class LaserWeapon : MonoBehaviour
                 Vector3 position = hit.point + hit.normal * 0.01f;
                 Quaternion rotation = Quaternion.LookRotation(hit.normal);
 
-                if (EffectsManager.Instance != null) 
+                if (EffectsManager.Instance != null)
                 {
                     GameObject bulletHole = EffectsManager.Instance.SpawnBulletHole(position, rotation);
                     if (bulletHole != null) bulletHole.transform.SetParent(hit.transform, true);

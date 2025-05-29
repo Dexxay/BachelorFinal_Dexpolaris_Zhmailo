@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "AI/UFO/Actions/Circle Player")]
 public class CirclePlayerAction : ActionNode

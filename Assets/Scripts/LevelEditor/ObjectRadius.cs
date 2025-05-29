@@ -15,9 +15,9 @@ public class ObjectRadius : MonoBehaviour
     [SerializeField] private string editorSceneName = "LevelEditorTemplate";
     [SerializeField] private string editorPlaneTag = "EditorPlane";
 
- 
+
     [SerializeField] private int rangeTextureSize = 256;
-    [SerializeField] private int radiusTextureSize = 256;  
+    [SerializeField] private int radiusTextureSize = 256;
 
     private GameObject radiusSpriteInstance;
     private GameObject rangeSpriteInstance;
@@ -125,9 +125,9 @@ public class ObjectRadius : MonoBehaviour
                 FindEditorPlaneHeight();
             }
 
-             if (radiusSpriteInstance == null)
+            if (radiusSpriteInstance == null)
             {
-                int textureSize = radiusTextureSize;  
+                int textureSize = radiusTextureSize;
                 Texture2D circleTexture = new Texture2D(textureSize, textureSize);
                 Color fillColor = radiusColor;
                 fillColor.a = radiusTransparency;
@@ -160,15 +160,15 @@ public class ObjectRadius : MonoBehaviour
             }
             radiusSpriteInstance.SetActive(true);
 
-             if (range > 0.0f)
+            if (range > 0.0f)
             {
                 if (rangeSpriteInstance == null)
                 {
-                    int textureSize = rangeTextureSize;  
+                    int textureSize = rangeTextureSize;
                     Texture2D contourTexture = new Texture2D(textureSize, textureSize);
                     Color contourColor = rangeColor;
                     contourColor.a = rangeTransparency;
-                    float outlineThickness = 2f;  
+                    float outlineThickness = 2f;
 
                     for (int y = 0; y < textureSize; y++)
                     {
@@ -241,12 +241,12 @@ public class ObjectRadius : MonoBehaviour
     {
         if (radiusSpriteInstance == null && rangeSpriteInstance == null) return;
 
-         if (radiusSpriteInstance != null)
+        if (radiusSpriteInstance != null)
         {
             radiusSpriteInstance.transform.position = new Vector3(transform.position.x, editorPlaneHeight + planeHeightOffset, transform.position.z);
             radiusSpriteInstance.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
 
-            int textureSize = radiusTextureSize;  
+            int textureSize = radiusTextureSize;
             float baseSpriteWorldDiameter = textureSize / 100f;
 
             float desiredWorldDiameter = radius * 2f;
@@ -262,12 +262,12 @@ public class ObjectRadius : MonoBehaviour
             }
         }
 
-         if (rangeSpriteInstance != null)
+        if (rangeSpriteInstance != null)
         {
             rangeSpriteInstance.transform.position = new Vector3(transform.position.x, editorPlaneHeight + planeHeightOffset, transform.position.z);
             rangeSpriteInstance.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
 
-            int textureSize = rangeTextureSize;  
+            int textureSize = rangeTextureSize;
             float baseSpriteWorldDiameter = textureSize / 100f;
 
             float desiredWorldDiameter = range * 2f;

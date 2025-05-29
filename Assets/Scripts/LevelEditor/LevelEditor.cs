@@ -1,6 +1,6 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelEditor : MonoBehaviour
@@ -337,10 +337,10 @@ public class LevelEditor : MonoBehaviour
             ShowMessage("There is a start asteroid on a map already. Delete old one to place a new one", true);
             return false;
         }
-        if (prefabToSpawn == finishAsteroidPrefab && finishAsteroidInstance != null && finishAsteroidInstance != objectToIgnore) 
+        if (prefabToSpawn == finishAsteroidPrefab && finishAsteroidInstance != null && finishAsteroidInstance != objectToIgnore)
         {
             ShowMessage("There is a finish asteroid on a map already. Delete old one to place a new one", true);
-            return false; 
+            return false;
         }
 
         bool canPlace = true;

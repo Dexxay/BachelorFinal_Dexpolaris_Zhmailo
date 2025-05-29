@@ -3,8 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "AI/UFO/Decisions/Player In Range For Attack")]
 public class PlayerInRangeDecision : DecisionNode
 {
-    public DecisionNode inRangeNode;     
-    public ActionNode outOfRangeNode;    
+    public DecisionNode inRangeNode;
+    public ActionNode outOfRangeNode;
 
     public override ActionNode MakeDecision(UFOBehaviour ufo)
     {
@@ -15,11 +15,11 @@ public class PlayerInRangeDecision : DecisionNode
         float distanceToPlayer = Vector3.Distance(ufo.transform.position, ufo.PlayerTransform.position);
         if (distanceToPlayer <= range)
         {
-            return inRangeNode.MakeDecision(ufo);  
+            return inRangeNode.MakeDecision(ufo);
         }
         else
         {
-            return outOfRangeNode;  
+            return outOfRangeNode;
         }
     }
 }

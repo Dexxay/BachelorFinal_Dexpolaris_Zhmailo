@@ -29,7 +29,7 @@ namespace BgTools.Dialogs
             TextFieldDialog window = ScriptableObject.CreateInstance<TextFieldDialog>();
 
             window.name = "TextFieldDialog '" + title + "'";
-            window.titleContent =  new GUIContent (title);
+            window.titleContent = new GUIContent(title);
             window.description = description;
             window.callback = callback;
             window.validatorList = validatorList;
@@ -52,13 +52,13 @@ namespace BgTools.Dialogs
             EditorGUILayout.LabelField(description);
             GUILayout.Space(20);
 
-            GUI.SetNextControlName(name+"_textInput");
+            GUI.SetNextControlName(name + "_textInput");
             resultString = EditorGUILayout.TextField(resultString, GUILayout.ExpandWidth(true));
-//            GUILayout.Space(20);
+            //            GUILayout.Space(20);
             GUILayout.FlexibleSpace();
 
 
-            foreach(TextValidator val in validatorList)
+            foreach (TextValidator val in validatorList)
             {
                 if (!val.Validate(resultString))
                 {
@@ -70,7 +70,7 @@ namespace BgTools.Dialogs
 
             GUILayout.BeginHorizontal();
 
-            if(errorValidator != null)
+            if (errorValidator != null)
             {
                 switch (errorValidator.m_errorType)
                 {
@@ -111,11 +111,11 @@ namespace BgTools.Dialogs
 
             // set focus only if element exist
             try
-            { 
-                EditorGUI.FocusTextInControl(name+"_textInput");
+            {
+                EditorGUI.FocusTextInControl(name + "_textInput");
             }
             catch (MissingReferenceException)
-            { } 
+            { }
 
             if (Event.current != null && Event.current.isKey)
             {

@@ -8,7 +8,7 @@ public class EditorCameraMovement : MonoBehaviour
     public float cameraZoomSpeed = 20f;
     public float cameraRotationSpeed = 100f;
     public float maxCameraDistance = 100f;
-    public float zoomFactor = 4f; 
+    public float zoomFactor = 4f;
     public float minZoomOffset = 0.1f;
 
     private Camera editorCamera;

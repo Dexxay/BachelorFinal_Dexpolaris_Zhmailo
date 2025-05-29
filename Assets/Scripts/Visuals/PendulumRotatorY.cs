@@ -3,12 +3,12 @@ using UnityEngine;
 public class PendulumRotatorY : MonoBehaviour
 {
     [Header("Налаштування обертання навколо вісі Y")]
-    [SerializeField] private float maxAngle = 15f;   
-    [SerializeField] private float maxSpeed = 1f;    
+    [SerializeField] private float maxAngle = 15f;
+    [SerializeField] private float maxSpeed = 1f;
 
-    private float angleAmplitude; 
-    private float speed;      
-    private float phase;          
+    private float angleAmplitude;
+    private float speed;
+    private float phase;
     private float baseYRotation;
 
     private void Start()

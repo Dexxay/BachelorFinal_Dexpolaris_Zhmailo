@@ -1,7 +1,6 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public class WeaponManager : MonoBehaviour
 {
@@ -50,7 +49,7 @@ public class WeaponManager : MonoBehaviour
 
     public void AddWeapon(WeaponType newWeapon)
     {
-        foreach (WeaponScript weapon in weapons) 
+        foreach (WeaponScript weapon in weapons)
         {
             if (weapon.WeaponType == newWeapon)
             {
@@ -87,10 +86,10 @@ public class WeaponManager : MonoBehaviour
         }
 
         WeaponChanged?.Invoke(selectedWeapon);
-        
+
     }
 
-    public bool HasWeaponOfType (WeaponType neededType)
+    public bool HasWeaponOfType(WeaponType neededType)
     {
         foreach (WeaponScript weapon in availableWeapons)
         {
@@ -102,7 +101,7 @@ public class WeaponManager : MonoBehaviour
         return false;
     }
 
-    public WeaponScript GetWeaponOfType (WeaponType neededType)
+    public WeaponScript GetWeaponOfType(WeaponType neededType)
     {
         foreach (WeaponScript weapon in availableWeapons)
         {

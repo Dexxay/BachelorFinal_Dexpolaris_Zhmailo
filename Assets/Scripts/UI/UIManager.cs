@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
     public void Restart()
     {
         Time.timeScale = 1f;
-        Scene scene = SceneManager.GetActiveScene(); 
+        Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.name);
     }
 

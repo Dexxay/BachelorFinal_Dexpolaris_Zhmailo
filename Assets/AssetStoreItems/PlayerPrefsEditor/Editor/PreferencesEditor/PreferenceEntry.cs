@@ -20,7 +20,7 @@
 
         public string ValueAsString()
         {
-            switch(m_typeSelection)
+            switch (m_typeSelection)
             {
                 case PrefTypes.String:
                     return m_strValue;

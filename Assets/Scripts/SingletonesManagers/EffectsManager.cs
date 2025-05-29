@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EffectsManager : MonoBehaviour
@@ -8,10 +6,10 @@ public class EffectsManager : MonoBehaviour
 
     [SerializeField] private GameObject bulletHolePrefab;
     [SerializeField] private int maxHolesAmount;
-    
+
     private GameObject[] bulletHoles;
     private int nextBulletIndex;
-    
+
     public static EffectsManager Instance => instance;
 
     void Awake()
@@ -46,7 +44,7 @@ public class EffectsManager : MonoBehaviour
         {
             nextBulletIndex = 0;
         }
-        
+
         return currentBulletHole;
     }
 }
